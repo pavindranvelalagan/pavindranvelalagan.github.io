@@ -569,6 +569,231 @@ a.achievement-title:hover {
   opacity: 1;
 }
 
+/* ===== BLOG PAGE ===== */
+.blog-intro {
+  margin-bottom: 24px;
+}
+
+.blog-intro p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.blog-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 28px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border-light);
+  transition: border-color 0.25s ease;
+  cursor: pointer;
+}
+
+.blog-item:first-child {
+  padding-top: 0;
+}
+
+.blog-item:last-child {
+  border-bottom: none;
+}
+
+.blog-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.blog-item-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+
+.blog-item-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text);
+  transition: color 0.15s ease;
+}
+
+.blog-item:hover .blog-item-title {
+  color: var(--text-muted);
+}
+
+.blog-item-date {
+  font-size: 0.72rem;
+  color: var(--text-subtle);
+  margin-left: auto;
+}
+
+.blog-item-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.blog-tag {
+  font-size: 0.65rem;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  font-weight: 400;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+}
+
+.blog-item-excerpt {
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.8;
+}
+
+.blog-item-thumb {
+  flex-shrink: 0;
+  width: 130px;
+}
+
+.blog-item-thumb img {
+  width: 130px;
+  height: 86px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid var(--gif-border);
+  display: block;
+  transition: border-color 0.25s ease;
+}
+
+/* Detail View */
+.blog-back-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  transition: color 0.15s ease;
+}
+
+.blog-back-btn:hover {
+  color: var(--text);
+}
+
+.blog-detail-header {
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 16px;
+}
+
+.blog-detail-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.blog-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.blog-detail-body {
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.85;
+}
+
+.blog-detail-body p {
+  margin-bottom: 20px;
+}
+
+.blog-detail-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.blog-detail-gallery img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid var(--border-light);
+}
+
+.blog-detail-video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  overflow: hidden;
+  margin: 28px 0;
+  border-radius: 3px;
+  border: 1px solid var(--border-light);
+}
+
+.blog-detail-video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.blog-detail-references {
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-light);
+}
+
+.blog-detail-references h4 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.blog-detail-references ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.blog-detail-references li {
+  font-size: 0.78rem;
+  margin-bottom: 8px;
+}
+
+.blog-detail-references a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  border-bottom: 1px dashed var(--text-subtle);
+}
+
+.blog-detail-references a:hover {
+  color: var(--text);
+  border-bottom-style: solid;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
   .header {
@@ -623,6 +848,29 @@ a.achievement-title:hover {
   .filter-tab {
     padding: 6px 10px 8px;
     white-space: nowrap;
+  }
+
+  .blog-item {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .blog-item-thumb {
+    width: 100%;
+  }
+
+  .blog-item-thumb img {
+    width: 100%;
+    height: 140px;
+  }
+
+  .blog-item-date {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .blog-detail-gallery {
+    grid-template-columns: 1fr;
   }
 }
 
