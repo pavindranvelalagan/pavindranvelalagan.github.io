@@ -2,7 +2,7 @@
 const navLinks = document.querySelectorAll('.nav-link');
 const pages = document.querySelectorAll('.page');
 
-function switchPage(targetPage) {
+function switchPage(targetPage, updateHistory = true) {
   navLinks.forEach(link => {
     link.classList.toggle('active', link.dataset.page === targetPage);
   });
@@ -12,7 +12,18 @@ function switchPage(targetPage) {
   
   // Reset blog view to list when navigating
   if (targetPage === 'blog') {
-    hideBlogDetail();
+    hideBlogDetail(false);
+  } else {
+    if (blogDetailView && blogDetailView.style.display !== 'none') {
+      hideBlogDetail(false);
+    }
+  }
+  
+  if (updateHistory) {
+    const url = new URL(window.location);
+    url.searchParams.set('page', targetPage);
+    url.searchParams.delete('blog');
+    window.history.pushState({ page: targetPage }, '', url.href);
   }
   
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -21,7 +32,7 @@ function switchPage(targetPage) {
 navLinks.forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
-    switchPage(link.dataset.page);
+    switchPage(link.dataset.page, true);
   });
 });
 
@@ -118,14 +129,16 @@ function renderBlogList() {
   });
 }
 
-function showBlogDetail(postId) {
+function showBlogDetail(postId, updateHistory = true) {
   const post = BLOGS_DATA.find(p => p.id === postId);
   if (!post) return;
 
   // Update URL so it can be shared
-  const url = new URL(window.location);
-  url.searchParams.set('blog', postId);
-  window.history.pushState({ path: url.href }, '', url.href);
+  if (updateHistory) {
+    const url = new URL(window.location);
+    url.searchParams.set('blog', postId);
+    window.history.pushState({ path: url.href }, '', url.href);
+  }
 
   // Build the detail content HTML
   const paragraphsHtml = post.content.map(p => `<p>${p}</p>`).join('');
@@ -180,14 +193,16 @@ function showBlogDetail(postId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function hideBlogDetail() {
+function hideBlogDetail(updateHistory = true) {
   if (blogDetailView) blogDetailView.style.display = 'none';
   if (blogListView) blogListView.style.display = 'block';
 
   // Remove blog param from URL
-  const url = new URL(window.location);
-  url.searchParams.delete('blog');
-  window.history.pushState({ path: url.href }, '', url.href);
+  if (updateHistory) {
+    const url = new URL(window.location);
+    url.searchParams.delete('blog');
+    window.history.pushState({ path: url.href }, '', url.href);
+  }
 }
 
 if (blogBackBtn) {
@@ -200,13 +215,35 @@ if (blogBackBtn) {
 // Initialize blog rendering
 renderBlogList();
 
-// Check URL for specific blog post on load
+// Check URL for specific blog post or page on load
 window.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const blogId = urlParams.get('blog');
+  const pageId = urlParams.get('page');
+  
   if (blogId) {
-    switchPage('blog');
-    showBlogDetail(blogId);
+    switchPage('blog', false);
+    showBlogDetail(blogId, false);
+  } else if (pageId) {
+    switchPage(pageId, false);
+  } else {
+    switchPage('about', false);
+  }
+});
+
+// Handle browser navigation (back/forward)
+window.addEventListener('popstate', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const blogId = urlParams.get('blog');
+  const pageId = urlParams.get('page');
+  
+  if (blogId) {
+    switchPage('blog', false);
+    showBlogDetail(blogId, false);
+  } else if (pageId) {
+    switchPage(pageId, false);
+  } else {
+    switchPage('about', false);
   }
 });
 
