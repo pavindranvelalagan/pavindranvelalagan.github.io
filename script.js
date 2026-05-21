@@ -122,6 +122,11 @@ function showBlogDetail(postId) {
   const post = BLOGS_DATA.find(p => p.id === postId);
   if (!post) return;
 
+  // Update URL so it can be shared
+  const url = new URL(window.location);
+  url.searchParams.set('blog', postId);
+  window.history.pushState({ path: url.href }, '', url.href);
+
   // Build the detail content HTML
   const paragraphsHtml = post.content.map(p => `<p>${p}</p>`).join('');
   const galleryHtml = post.images.map(img => `<img src="${img}" alt="Blog image" loading="lazy" />`).join('');
@@ -129,7 +134,12 @@ function showBlogDetail(postId) {
 
   blogDetailContent.innerHTML = `
     <header class="blog-detail-header">
-      <h2 class="blog-detail-title">${post.title}</h2>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+        <h2 class="blog-detail-title">${post.title}</h2>
+        <button onclick="copyShareLink(this)" style="background: none; border: none; color: inherit; cursor: pointer; padding: 0.5rem; display: flex; align-items: center; justify-content: center; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="Copy Link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+        </button>
+      </div>
       <div class="blog-detail-meta">
         <span>${post.date}</span>
         <span class="dot">·</span>
@@ -173,6 +183,11 @@ function showBlogDetail(postId) {
 function hideBlogDetail() {
   if (blogDetailView) blogDetailView.style.display = 'none';
   if (blogListView) blogListView.style.display = 'block';
+
+  // Remove blog param from URL
+  const url = new URL(window.location);
+  url.searchParams.delete('blog');
+  window.history.pushState({ path: url.href }, '', url.href);
 }
 
 if (blogBackBtn) {
@@ -184,3 +199,27 @@ if (blogBackBtn) {
 
 // Initialize blog rendering
 renderBlogList();
+
+// Check URL for specific blog post on load
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const blogId = urlParams.get('blog');
+  if (blogId) {
+    switchPage('blog');
+    showBlogDetail(blogId);
+  }
+});
+
+// Copy link function
+window.copyShareLink = function(btn) {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    setTimeout(() => {
+      btn.innerHTML = originalHTML;
+    }, 2000);
+  }).catch(err => {
+    console.error('Failed to copy: ', err);
+  });
+};
+
