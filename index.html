@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Name — Portfolio</title>
-  <meta name="description" content="Personal portfolio of Your Name — Projects, Achievements, and Photography." />
+  <title>Pavindran Velalagan — Portfolio</title>
+  <meta name="description" content="Portfolio of Pavindran Velalagan — Computer Engineering undergraduate, ML engineer, and builder of software and hardware systems." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -24,24 +24,26 @@
   <header class="header">
     <div class="header-left">
       <div class="avatar-wrap">
-        <img src="avatar.png" alt="Profile photo" class="avatar" id="avatar-img" />
+        <img src="docs/Pavindran.jpg" alt="Pavindran Velalagan" class="avatar" />
       </div>
       <div class="header-info">
-        <h1 class="name">Your Name</h1>
+        <h1 class="name">Pavindran Velalagan</h1>
         <div class="header-links">
-          <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/pavindranvelalagan" target="_blank" rel="noopener">GitHub</a>
           <span class="dot">·</span>
-          <a href="mailto:you@example.com">Email</a>
+          <a href="mailto:pavindran.px@gmail.com">Email</a>
           <span class="dot">·</span>
-          <a href="resume.pdf" target="_blank" rel="noopener">Resume</a>
+          <a href="https://linkedin.com/in/pavindran-velalagan-404646214" target="_blank" rel="noopener">LinkedIn</a>
+          <span class="dot">·</span>
+          <a href="docs/PavindranV CV.pdf" target="_blank" rel="noopener">Resume</a>
         </div>
       </div>
     </div>
     <nav class="nav" aria-label="Main navigation">
-      <a href="#" class="nav-link active" data-page="about" id="nav-about">[About]</a>
-      <a href="#" class="nav-link" data-page="projects" id="nav-projects">[Projects]</a>
-      <a href="#" class="nav-link" data-page="achievements" id="nav-achievements">[Achievements]</a>
-      <a href="#" class="nav-link" data-page="photography" id="nav-photography">[Photography]</a>
+      <a href="#" class="nav-link active" data-page="about">[About]</a>
+      <a href="#" class="nav-link" data-page="projects">[Projects]</a>
+      <a href="#" class="nav-link" data-page="achievements">[Achievements]</a>
+      <a href="#" class="nav-link" data-page="photography">[Photography]</a>
     </nav>
   </header>
 
@@ -50,176 +52,230 @@
   <!-- Main Content -->
   <main class="main">
 
-    <!-- About Page -->
+    <!-- ===== ABOUT PAGE ===== -->
     <section class="page active" id="page-about">
       <div class="about-text">
         <p>
-          Hello, I'm <strong>Your Name</strong> — a developer, builder, and curious mind.
-          I believe that technology, at its best, is a bridge between imagination and reality.
-          Every line of code I write is a small attempt to make that bridge a little more solid.
+          I'm <strong>Pavindran Velalagan</strong> — a third-year Computer Engineering undergraduate at the
+          University of Peradeniya, Sri Lanka. I build things that sit at the intersection of software,
+          hardware, and intelligence.
         </p>
         <p>
-          I grew up tinkering with computers, fascinated by how software could reshape the way people
-          experience the world. That curiosity never left me — it only grew deeper, branching into
-          systems design, human-computer interaction, and the art of clean, purposeful code.
+          Most recently I worked as an ML Engineering Apprentice at <strong>Cogntix</strong>, where I dug into
+          text extraction from complex document layouts, CV classification models, and cloud deployment on AWS.
+          Before that, I served as a casual instructor helping undergraduates find their footing with Python
+          and Object-Oriented Programming.
         </p>
         <p>
-          I value simplicity over complexity. The best solutions are the ones you don't notice —
-          they just work, quietly and reliably, letting people focus on what matters to them.
-          I carry that philosophy into every project I take on.
+          My projects range from a closed-loop IoT medical device that regulates IV drip flow rates, to a
+          full-stack event management platform with an AI-powered budget bot, to a published research paper
+          on Vision Transformers for tomato leaf disease recognition. I'm drawn to problems where both
+          the thinking and the making matter.
         </p>
         <p>
-          When I'm not coding, I'm usually behind a camera, chasing light in places where most
-          people don't think to look. Photography taught me to see — really see — and that skill
-          has made me a better developer, designer, and thinker.
+          Outside of engineering I'm actively involved in the IEEE Computer Society, AerogenZ Aviation Club,
+          and Perabeats Media Society — where I've spent time as a videographer, editor, and webmaster.
         </p>
         <p>
-          I'm always open to new challenges, interesting collaborations, and meaningful conversations.
-          If something I've built resonates with you, or if you'd just like to talk — reach out.
+          I'm always open to interesting projects, research collaborations, and good conversations.
+          Feel free to reach out.
         </p>
       </div>
     </section>
 
-    <!-- Projects Page -->
+    <!-- ===== PROJECTS PAGE ===== -->
     <section class="page" id="page-projects">
-      <div class="projects-list">
 
-        <div class="project-item">
+      <!-- Filter Tabs -->
+      <div class="filter-tabs" role="tablist" aria-label="Project filter">
+        <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button class="filter-tab" data-filter="software" role="tab" aria-selected="false">Software</button>
+        <button class="filter-tab" data-filter="iot" role="tab" aria-selected="false">IoT / Embedded</button>
+        <button class="filter-tab" data-filter="publication" role="tab" aria-selected="false">Publications</button>
+      </div>
+
+      <div class="projects-list" id="projects-list">
+
+        <!-- Smart IV Retrofit Controller — IoT -->
+        <div class="project-item" data-category="iot">
           <div class="project-info">
             <div class="project-title-row">
-              <a href="https://github.com/" target="_blank" rel="noopener" class="project-title">[Project One]</a>
-              <a href="https://github.com/" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-              </a>
-              <span class="project-date">12/2024</span>
+              <span class="project-title">[Smart IV Retrofit Controller]</span>
+              <span class="project-badge badge-iot">IoT / Embedded</span>
+              <span class="project-date">Jan 2026 – Present</span>
             </div>
-            <p class="project-tech">React · Node.js · MongoDB · Express</p>
+            <p class="project-tech">ESP32 · MQTT · C++ · Hardware Design · IoT</p>
             <p class="project-desc">
-              A full-stack web application for managing and tracking personal projects with
-              real-time collaboration features, built with a focus on clean UI and developer experience.
+              Developing a closed-loop medical device to bridge the gap between inaccurate gravity-fed drips
+              and costly volumetric infusion pumps. Implements an intelligent stepper motor mechanism with an
+              IR drop counter to automatically regulate flow rate, and integrates IoT connectivity via MQTT
+              to a centralized ward dashboard for real-time monitoring.
             </p>
           </div>
           <div class="project-gif">
-            <img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" alt="Project One demo" />
+            <img src="https://media.giphy.com/media/3o7btNhMBytxAM6YBa/giphy.gif" alt="IoT device demo" loading="lazy" />
           </div>
         </div>
 
-        <div class="project-item">
+        <!-- Image Processing Learning Lab — Software -->
+        <div class="project-item" data-category="software">
           <div class="project-info">
             <div class="project-title-row">
-              <a href="https://github.com/" target="_blank" rel="noopener" class="project-title">[Project Two]</a>
-              <a href="https://github.com/" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              <a href="https://github.com/pavindranvelalagan" target="_blank" rel="noopener" class="project-title">[Image Processing Learning Lab]</a>
+              <a href="https://github.com/pavindranvelalagan" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
               </a>
-              <span class="project-date">8/2024</span>
+              <span class="project-badge badge-software">Software</span>
+              <span class="project-date">Nov – Dec 2025</span>
             </div>
-            <p class="project-tech">Next.js · TypeScript · PostgreSQL · Prisma</p>
+            <p class="project-tech">Python · PyQt5 · OpenCV · NumPy · Matplotlib</p>
             <p class="project-desc">
-              An AI-powered content management platform that uses machine learning to categorize
-              and surface relevant content. Features a custom recommendation engine and analytics dashboard.
+              An offline desktop lab application for the Digital Image Processing course. Implements
+              visualization for syllabus-aligned operations including Histograms, K-Means segmentation,
+              Fourier Transform, and simple CNNs. Features a "Learn This" panel providing intuition,
+              formulas, and real-world use cases alongside live code execution.
             </p>
           </div>
           <div class="project-gif">
-            <img src="https://media.giphy.com/media/RbDKaczqWovIugyJmW/giphy.gif" alt="Project Two demo" />
+            <img src="https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif" alt="Image processing demo" loading="lazy" />
           </div>
         </div>
 
-        <div class="project-item">
+        <!-- Event Management System — Software -->
+        <div class="project-item" data-category="software">
           <div class="project-info">
             <div class="project-title-row">
-              <a href="https://github.com/" target="_blank" rel="noopener" class="project-title">[Project Three]</a>
-              <a href="https://github.com/" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              <a href="https://github.com/pavindranvelalagan" target="_blank" rel="noopener" class="project-title">[Event Management System]</a>
+              <a href="https://github.com/pavindranvelalagan" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
               </a>
-              <span class="project-date">3/2024</span>
+              <span class="project-badge badge-software">Software</span>
+              <span class="project-date">Aug – Nov 2025</span>
             </div>
-            <p class="project-tech">Python · Flask · TensorFlow · React</p>
+            <p class="project-tech">React · TypeScript · Node.js (Fastify) · PostgreSQL · Google Gemini</p>
             <p class="project-desc">
-              A computer vision pipeline that detects and classifies objects in real-time video streams,
-              with a web interface for monitoring and configuration.
+              Full-stack API-first monorepo with role-based JWT authentication and Zod schema validation.
+              Integrated an AI-driven "Budget Bot" powered by Google Gemini to analyze expenses and surface
+              spending insights. Features automatic database bootstrapping, mock data seeding, and expense
+              analytics dashboards.
             </p>
           </div>
           <div class="project-gif">
-            <img src="https://media.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif" alt="Project Three demo" />
+            <img src="https://media.giphy.com/media/RbDKaczqWovIugyJmW/giphy.gif" alt="Event management system demo" loading="lazy" />
           </div>
         </div>
 
-        <div class="project-item">
+        <!-- Data Analytics Web App — Software -->
+        <div class="project-item" data-category="software">
           <div class="project-info">
             <div class="project-title-row">
-              <a href="https://github.com/" target="_blank" rel="noopener" class="project-title">[Project Four]</a>
-              <a href="https://github.com/" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              <a href="https://github.com/pavindranvelalagan" target="_blank" rel="noopener" class="project-title">[Data Analytics Web App]</a>
+              <a href="https://github.com/pavindranvelalagan" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
               </a>
-              <span class="project-date">11/2023</span>
+              <span class="project-badge badge-software">Software</span>
+              <span class="project-date">Apr – Jun 2018</span>
             </div>
-            <p class="project-tech">Vue.js · Firebase · Tailwind CSS</p>
+            <p class="project-tech">Python (Django) · JavaScript · PHP · MySQL</p>
             <p class="project-desc">
-              A minimalist productivity app with kanban boards, time tracking, and habit streaks.
-              Syncs across devices in real-time with offline-first architecture.
+              Solo-developed a web app allowing CSV/Excel data import and generation of complex analytical
+              graphs. Selected as a finalist in the <strong>Yarl Geek Challenge 2018</strong>.
             </p>
           </div>
           <div class="project-gif">
-            <img src="https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif" alt="Project Four demo" />
+            <img src="https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif" alt="Data analytics demo" loading="lazy" />
+          </div>
+        </div>
+
+        <!-- ViT-RoT Publication — Publication -->
+        <div class="project-item" data-category="publication">
+          <div class="project-info">
+            <div class="project-title-row">
+              <a href="https://www.mdpi.com/2624-7402/7/6/185" target="_blank" rel="noopener" class="project-title">[ViT-RoT: Vision Transformer-Based Robust Framework for Tomato Leaf Disease Recognition]</a>
+              <span class="project-badge badge-pub">Publication</span>
+              <span class="project-date">Jun 10, 2025</span>
+            </div>
+            <p class="project-tech">Vision Transformers · Deep Learning · Python · AgriEngineering</p>
+            <p class="project-desc">
+              <strong>Pavindran Velalagan</strong> et al. Published in <em>MDPI – AgriEngineering</em>, June 2025.
+              A robust ViT-based framework for automated recognition of tomato leaf diseases,
+              achieving high accuracy with a focus on practical agricultural deployment.
+              <br/>
+              <a href="https://www.mdpi.com/2624-7402/7/6/185" target="_blank" rel="noopener" class="pub-link">→ Read paper</a>
+            </p>
+          </div>
+          <div class="project-gif project-gif-pub">
+            <img src="https://media.giphy.com/media/3o7btNhMBytxAM6YBa/giphy.gif" alt="Research publication" loading="lazy" />
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- Achievements Page -->
+    <!-- ===== ACHIEVEMENTS PAGE ===== -->
     <section class="page" id="page-achievements">
       <div class="achievements-list">
 
         <div class="achievement-item">
-          <a href="#" class="achievement-title">1st Place — National Hackathon 2025</a>
-          <span class="achievement-date">2025-03-15</span>
+          <a href="https://www.mdpi.com/2624-7402/7/6/185" target="_blank" rel="noopener" class="achievement-title">Published Research — MDPI AgriEngineering</a>
+          <span class="achievement-date">Jun 2025</span>
           <p class="achievement-desc">
-            Won first place among 200+ teams for building a real-time disaster response coordination platform using AI and geospatial data.
+            Co-authored <em>ViT-RoT: Vision Transformer-Based Robust Framework for Tomato Leaf Disease Recognition</em>,
+            published in MDPI AgriEngineering (J.1). First listed author.
           </p>
         </div>
 
         <div class="achievement-item">
-          <a href="#" class="achievement-title">Google Summer of Code Contributor</a>
-          <span class="achievement-date">2024-06-01</span>
+          <span class="achievement-title">Finalist — Startup Spark 2024</span>
+          <span class="achievement-date">Oct 2024</span>
           <p class="achievement-desc">
-            Selected as a GSoC contributor to work on an open-source developer tooling project, contributing over 3,000 lines of code.
+            Selected as a finalist for the Intelligent Traffic Monitoring System (ITMS) with Team Zephyrus
+            at the IESL Student Chapter competition hosted by the University of Moratuwa. Proposed an
+            AI-driven solution with dynamic traffic signal control and emergency vehicle prioritization.
           </p>
         </div>
 
         <div class="achievement-item">
-          <a href="#" class="achievement-title">Best Final Year Project Award</a>
-          <span class="achievement-date">2024-05-20</span>
+          <span class="achievement-title">ICPC Invigilator — Sri Lanka Regional Contest 2025/26</span>
+          <span class="achievement-date">Jan 2026</span>
           <p class="achievement-desc">
-            Awarded best project in the Computer Science department for a thesis on efficient neural architecture search.
+            Served as an official invigilator for the first-ever ICPC Regional programming contest hosted
+            in Sri Lanka at the University of Peradeniya, ensuring strict adherence to global ICPC standards.
           </p>
         </div>
 
         <div class="achievement-item">
-          <a href="#" class="achievement-title">Dean's List — 3 Consecutive Semesters</a>
-          <span class="achievement-date">2023-12-01</span>
+          <span class="achievement-title">Webmaster — IEEE CS Student Chapter, UoP</span>
+          <span class="achievement-date">Nov 2025 – Present</span>
           <p class="achievement-desc">
-            Maintained a GPA above 3.9 across three semesters while leading the university's developer club.
+            Manage and maintain the chapter's web presence. Previously served as Marketing Team Member
+            (Jul 2024 – Nov 2025), contributing to graphic design and promotional campaigns for events
+            such as AlgoForge.
           </p>
         </div>
 
         <div class="achievement-item">
-          <a href="#" class="achievement-title">Open Source: 500+ GitHub Stars</a>
-          <span class="achievement-date">2023-08-10</span>
+          <span class="achievement-title">Finalist — Yarl Geek Challenge Season 7</span>
+          <span class="achievement-date">2018</span>
           <p class="achievement-desc">
-            A side project CLI tool gained traction in the developer community, reaching 500 stars and being featured in a popular newsletter.
+            Selected as a finalist for a solo-built Data Analytics Web Application at the Yarl Geek
+            Challenge hosted by Yarl IT Hub.
           </p>
         </div>
 
         <div class="achievement-item">
-          <span class="achievement-title muted">Upcoming certification in cloud architecture</span>
-          <span class="achievement-date muted">release soon...</span>
+          <span class="achievement-title">ML Engineering Apprentice — Cogntix</span>
+          <span class="achievement-date">Aug – Oct 2025</span>
+          <p class="achievement-desc">
+            Worked on text extraction for complex multi-column CV layouts, AI-based CV filtering,
+            document classification models, and cloud deployment using AWS (EC2, Route 53, Lightsail, Lambda).
+          </p>
         </div>
 
       </div>
     </section>
 
-    <!-- Photography Page -->
+    <!-- ===== PHOTOGRAPHY PAGE ===== -->
     <section class="page" id="page-photography">
       <div class="photo-intro">
         <p>A few frames from places and moments that made me pause.</p>
