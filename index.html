@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name — Portfolio</title>
+  <meta name="description" content="Personal portfolio of Your Name — Projects, Achievements, and Photography." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Theme Toggle -->
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">
+    <span class="toggle-icon" id="toggle-icon">🌙</span>
+  </button>
+
+  <!-- Vertical Side Text -->
+  <div class="side-text">you may stop, but time won't stop</div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="avatar-wrap">
+        <img src="avatar.png" alt="Profile photo" class="avatar" id="avatar-img" />
+      </div>
+      <div class="header-info">
+        <h1 class="name">Your Name</h1>
+        <div class="header-links">
+          <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+          <span class="dot">·</span>
+          <a href="mailto:you@example.com">Email</a>
+          <span class="dot">·</span>
+          <a href="resume.pdf" target="_blank" rel="noopener">Resume</a>
+        </div>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#" class="nav-link active" data-page="about" id="nav-about">[About]</a>
+      <a href="#" class="nav-link" data-page="projects" id="nav-projects">[Projects]</a>
+      <a href="#" class="nav-link" data-page="achievements" id="nav-achievements">[Achievements]</a>
+      <a href="#" class="nav-link" data-page="photography" id="nav-photography">[Photography]</a>
+    </nav>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- About Page -->
+    <section class="page active" id="page-about">
+      <div class="about-text">
+        <p>
+          Hello, I'm <strong>Your Name</strong> — a developer, builder, and curious mind.
+          I believe that technology, at its best, is a bridge between imagination and reality.
+          Every line of code I write is a small attempt to make that bridge a little more solid.
+        </p>
+        <p>
+          I grew up tinkering with computers, fascinated by how software could reshape the way people
+          experience the world. That curiosity never left me — it only grew deeper, branching into
+          systems design, human-computer interaction, and the art of clean, purposeful code.
+        </p>
+        <p>
+          I value simplicity over complexity. The best solutions are the ones you don't notice —
+          they just work, quietly and reliably, letting people focus on what matters to them.
+          I carry that philosophy into every project I take on.
+        </p>
+        <p>
+          When I'm not coding, I'm usually behind a camera, chasing light in places where most
+          people don't think to look. Photography taught me to see — really see — and that skill
+          has made me a better developer, designer, and thinker.
+        </p>
+        <p>
+          I'm always open to new challenges, interesting collaborations, and meaningful conversations.
+          If something I've built resonates with you, or if you'd just like to talk — reach out.
+        </p>
+      </div>
+    </section>
+
+    <!-- Projects Page -->
+    <section class="page" id="page-projects">
+      <div class="projects-list">
+
+        <div class="project-item">
+          <div class="project-info">
+            <div class="project-title-row">
+              <a href="https://github.com/" target="_blank" rel="noopener" class="project-title">[Project One]</a>
+              <a href="https://github.com/" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+              <span class="project-date">12/2024</span>
+            </div>
+            <p class="project-tech">React · Node.js · MongoDB · Express</p>
+            <p class="project-desc">
+              A full-stack web application for managing and tracking personal projects with
+              real-time collaboration features, built with a focus on clean UI and developer experience.
+            </p>
+          </div>
+          <div class="project-gif">
+            <img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" alt="Project One demo" />
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-info">
+            <div class="project-title-row">
+              <a href="https://github.com/" target="_blank" rel="noopener" class="project-title">[Project Two]</a>
+              <a href="https://github.com/" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+              <span class="project-date">8/2024</span>
+            </div>
+            <p class="project-tech">Next.js · TypeScript · PostgreSQL · Prisma</p>
+            <p class="project-desc">
+              An AI-powered content management platform that uses machine learning to categorize
+              and surface relevant content. Features a custom recommendation engine and analytics dashboard.
+            </p>
+          </div>
+          <div class="project-gif">
+            <img src="https://media.giphy.com/media/RbDKaczqWovIugyJmW/giphy.gif" alt="Project Two demo" />
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-info">
+            <div class="project-title-row">
+              <a href="https://github.com/" target="_blank" rel="noopener" class="project-title">[Project Three]</a>
+              <a href="https://github.com/" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+              <span class="project-date">3/2024</span>
+            </div>
+            <p class="project-tech">Python · Flask · TensorFlow · React</p>
+            <p class="project-desc">
+              A computer vision pipeline that detects and classifies objects in real-time video streams,
+              with a web interface for monitoring and configuration.
+            </p>
+          </div>
+          <div class="project-gif">
+            <img src="https://media.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif" alt="Project Three demo" />
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-info">
+            <div class="project-title-row">
+              <a href="https://github.com/" target="_blank" rel="noopener" class="project-title">[Project Four]</a>
+              <a href="https://github.com/" target="_blank" rel="noopener" class="github-icon" title="View on GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+              <span class="project-date">11/2023</span>
+            </div>
+            <p class="project-tech">Vue.js · Firebase · Tailwind CSS</p>
+            <p class="project-desc">
+              A minimalist productivity app with kanban boards, time tracking, and habit streaks.
+              Syncs across devices in real-time with offline-first architecture.
+            </p>
+          </div>
+          <div class="project-gif">
+            <img src="https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif" alt="Project Four demo" />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Achievements Page -->
+    <section class="page" id="page-achievements">
+      <div class="achievements-list">
+
+        <div class="achievement-item">
+          <a href="#" class="achievement-title">1st Place — National Hackathon 2025</a>
+          <span class="achievement-date">2025-03-15</span>
+          <p class="achievement-desc">
+            Won first place among 200+ teams for building a real-time disaster response coordination platform using AI and geospatial data.
+          </p>
+        </div>
+
+        <div class="achievement-item">
+          <a href="#" class="achievement-title">Google Summer of Code Contributor</a>
+          <span class="achievement-date">2024-06-01</span>
+          <p class="achievement-desc">
+            Selected as a GSoC contributor to work on an open-source developer tooling project, contributing over 3,000 lines of code.
+          </p>
+        </div>
+
+        <div class="achievement-item">
+          <a href="#" class="achievement-title">Best Final Year Project Award</a>
+          <span class="achievement-date">2024-05-20</span>
+          <p class="achievement-desc">
+            Awarded best project in the Computer Science department for a thesis on efficient neural architecture search.
+          </p>
+        </div>
+
+        <div class="achievement-item">
+          <a href="#" class="achievement-title">Dean's List — 3 Consecutive Semesters</a>
+          <span class="achievement-date">2023-12-01</span>
+          <p class="achievement-desc">
+            Maintained a GPA above 3.9 across three semesters while leading the university's developer club.
+          </p>
+        </div>
+
+        <div class="achievement-item">
+          <a href="#" class="achievement-title">Open Source: 500+ GitHub Stars</a>
+          <span class="achievement-date">2023-08-10</span>
+          <p class="achievement-desc">
+            A side project CLI tool gained traction in the developer community, reaching 500 stars and being featured in a popular newsletter.
+          </p>
+        </div>
+
+        <div class="achievement-item">
+          <span class="achievement-title muted">Upcoming certification in cloud architecture</span>
+          <span class="achievement-date muted">release soon...</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Photography Page -->
+    <section class="page" id="page-photography">
+      <div class="photo-intro">
+        <p>A few frames from places and moments that made me pause.</p>
+      </div>
+      <div class="photo-grid">
+        <div class="photo-item">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80" alt="Mountain landscape" loading="lazy" />
+        </div>
+        <div class="photo-item">
+          <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=80" alt="Aerial nature view" loading="lazy" />
+        </div>
+        <div class="photo-item">
+          <img src="https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=600&q=80" alt="City at night" loading="lazy" />
+        </div>
+        <div class="photo-item">
+          <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=600&q=80" alt="Golden hour nature" loading="lazy" />
+        </div>
+        <div class="photo-item">
+          <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80" alt="Forest path" loading="lazy" />
+        </div>
+        <div class="photo-item">
+          <img src="https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=600&q=80" alt="Ocean shore" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
