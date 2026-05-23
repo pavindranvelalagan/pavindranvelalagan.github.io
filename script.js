@@ -18,6 +18,10 @@ function switchPage(targetPage, updateHistory = true) {
       hideBlogDetail(false);
     }
   }
+
+  if (targetPage === 'photography') {
+    renderPhotography();
+  }
   
   if (updateHistory) {
     const url = new URL(window.location);
@@ -259,4 +263,45 @@ window.copyShareLink = function(btn) {
     console.error('Failed to copy: ', err);
   });
 };
+
+// ===== INSTAGRAM PHOTOGRAPHY RENDERING =====
+let instagramLoaded = false;
+
+function renderPhotography() {
+  const photoGrid = document.getElementById('photo-grid');
+  if (!photoGrid) return;
+  
+  // Only render if we haven't rendered yet
+  if (photoGrid.dataset.rendered === 'true') {
+    if (window.instgrm && window.instgrm.Embeds) {
+      window.instgrm.Embeds.process();
+    }
+    return;
+  }
+  
+  if (typeof INSTAGRAM_EMBEDS === 'undefined' || !INSTAGRAM_EMBEDS.length) {
+    photoGrid.innerHTML = '<div class="photo-loading">No posts found.</div>';
+    return;
+  }
+  
+  // Render embeds inside individual .photo-item divs
+  photoGrid.innerHTML = INSTAGRAM_EMBEDS.map(embed => `
+    <div class="photo-item">
+      ${embed}
+    </div>
+  `).join('');
+  
+  photoGrid.dataset.rendered = 'true';
+  
+  // Load/process the Instagram embed script dynamically
+  if (window.instgrm && window.instgrm.Embeds) {
+    window.instgrm.Embeds.process();
+  } else if (!instagramLoaded) {
+    instagramLoaded = true;
+    const script = document.createElement('script');
+    script.src = 'https://www.instagram.com/embed.js';
+    script.async = true;
+    document.body.appendChild(script);
+  }
+}
 

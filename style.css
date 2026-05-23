@@ -532,7 +532,7 @@ a.achievement-title:hover {
 
 /* ===== PHOTOGRAPHY PAGE ===== */
 .photo-intro {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .photo-intro p {
@@ -543,30 +543,38 @@ a.achievement-title:hover {
 
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  justify-items: center;
+  align-items: start;
 }
 
 .photo-item {
-  overflow: hidden;
-  border-radius: 3px;
-  border: 1px solid var(--border-light);
-  aspect-ratio: 3/2;
-  transition: border-color 0.25s ease;
-}
-
-.photo-item img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.3s ease, opacity 0.25s ease;
-  opacity: 0.92;
+  display: flex;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.photo-item:hover img {
-  transform: scale(1.03);
-  opacity: 1;
+.photo-item:hover {
+  transform: translateY(-4px);
+}
+
+.photo-loading {
+  grid-column: 1 / -1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  padding: 48px 0;
+  text-align: center;
+  font-style: italic;
+}
+
+@media (max-width: 680px) {
+  .photo-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 /* ===== BLOG PAGE ===== */
