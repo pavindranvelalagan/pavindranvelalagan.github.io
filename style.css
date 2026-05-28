@@ -802,6 +802,82 @@ a.achievement-title:hover {
   }
 }
 
+@media (max-width: 480px) {
+  .header-info {
+    width: 100%;
+  }
+
+  .nav {
+    margin-right: 0;
+    align-items: flex-start;
+  }
+}
+
+/* ===== LIGHTBOX ===== */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.9);
+  backdrop-filter: blur(5px);
+}
+
+.lightbox-content {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 85vh;
+  object-fit: contain;
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+  from {transform:scale(0.95); opacity:0;}
+  to {transform:scale(1); opacity:1;}
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 25px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Make markdown images inside blog detail fit gracefully */
+.blog-detail-body-text img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 24px auto;
+  border-radius: 4px;
+  cursor: zoom-in;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 4px 12px var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.blog-detail-body-text img:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
 @media (max-width: 768px) {
   .header {
     flex-direction: column;

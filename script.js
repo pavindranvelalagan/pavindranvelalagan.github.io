@@ -145,18 +145,37 @@ function escapeHtml(text) {
 
 function parseInlineMarkdown(text) {
   let cleanText = escapeHtml(text);
+  const placeholders = [];
 
-  // 1. Bold (**text**)
+  // 1. Inline code (`code`)
+  cleanText = cleanText.replace(/`(.*?)`/g, (match, p1) => {
+    placeholders.push(`<code>${p1}</code>`);
+    return `@@PH_${placeholders.length - 1}@@`;
+  });
+
+  // 2. Images (![alt](url))
+  cleanText = cleanText.replace(/!\[(.*?)\]\((.*?)\)/g, (match, p1, p2) => {
+    placeholders.push(`<img src="${p2}" alt="${p1}" loading="lazy" />`);
+    return `@@PH_${placeholders.length - 1}@@`;
+  });
+
+  // 3. Links ([text](url))
+  cleanText = cleanText.replace(/\[(.*?)\]\((.*?)\)/g, (match, p1, p2) => {
+    placeholders.push(`<a href="${p2}" target="_blank" rel="noopener">${p1}</a>`);
+    return `@@PH_${placeholders.length - 1}@@`;
+  });
+
+  // 4. Bold (**text**)
   cleanText = cleanText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  // 2. Italic (*text* or _text_)
+  
+  // 5. Italic (*text* or _text_)
   cleanText = cleanText.replace(/\*(.*?)\*/g, '<em>$1</em>');
   cleanText = cleanText.replace(/_(.*?)_/g, '<em>$1</em>');
-  // 3. Inline code (`code`)
-  cleanText = cleanText.replace(/`(.*?)`/g, '<code>$1</code>');
-  // 4. Images (![alt](url))
-  cleanText = cleanText.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" loading="lazy" />');
-  // 5. Links ([text](url))
-  cleanText = cleanText.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+  // Restore placeholders
+  for (let i = 0; i < placeholders.length; i++) {
+    cleanText = cleanText.replace(`@@PH_${i}@@`, placeholders[i]);
+  }
 
   return cleanText;
 }
@@ -526,6 +545,7 @@ async function showBlogDetail(postId, updateHistory = true) {
       } else {
         bodyText.innerHTML = parseMarkdownToHTML(v2Md);
       }
+      setupBlogImagesLightbox();
     }
 
     btnV1.addEventListener('click', () => {
@@ -537,6 +557,7 @@ async function showBlogDetail(postId, updateHistory = true) {
       bodyText.classList.add('fade-out');
       setTimeout(() => {
         bodyText.innerHTML = parseMarkdownToHTML(v1Md);
+        setupBlogImagesLightbox();
         bodyText.classList.remove('fade-out');
       }, 150);
     });
@@ -550,6 +571,7 @@ async function showBlogDetail(postId, updateHistory = true) {
       bodyText.classList.add('fade-out');
       setTimeout(() => {
         bodyText.innerHTML = parseMarkdownToHTML(v2Md);
+        setupBlogImagesLightbox();
         bodyText.classList.remove('fade-out');
       }, 150);
     });
@@ -563,6 +585,7 @@ async function showBlogDetail(postId, updateHistory = true) {
       md = (typeof post.content === 'string') ? post.content : '';
     }
     bodyText.innerHTML = parseMarkdownToHTML(md);
+    setupBlogImagesLightbox();
   }
 }
 
@@ -587,6 +610,40 @@ if (blogBackBtn) {
 
 // Initialize blog rendering
 renderBlogList();
+
+// Initialize filtering and routing on load
+document.addEventListener('DOMContentLoaded', () => {
+  filterProjects('all');
+  handleRouting();
+});
+
+// ===== LIGHTBOX LOGIC =====
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxClose = document.querySelector('.lightbox-close');
+
+if (lightbox && lightboxClose) {
+  lightboxClose.addEventListener('click', () => {
+    lightbox.style.display = 'none';
+  });
+
+  lightbox.addEventListener('click', (e) => {
+    if (e.target !== lightboxImg) {
+      lightbox.style.display = 'none';
+    }
+  });
+}
+
+function setupBlogImagesLightbox() {
+  const blogImages = document.querySelectorAll('.blog-detail-body-text img, .blog-detail-gallery img');
+  blogImages.forEach(img => {
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', () => {
+      lightbox.style.display = 'block';
+      lightboxImg.src = img.src;
+    });
+  });
+}
 
 // Check URL for specific blog post or page on load
 window.addEventListener('DOMContentLoaded', () => {
