@@ -398,13 +398,15 @@ async function showBlogDetail(postId, updateHistory = true) {
 
   let detailBodyHtml = '';
   if (isVersioned) {
+    const v1Name = post.v1Name || 'Intermediate';
+    const v2Name = post.v2Name || 'Beginner';
     detailBodyHtml = `
       <div class="version-toggle-container">
         <span class="toggle-label">Target Audience:</span>
         <div class="version-toggle-capsule">
           <div class="toggle-slider" id="toggle-slider"></div>
-          <button class="toggle-btn active" id="toggle-btn-v1">Intermediate</button>
-          <button class="toggle-btn" id="toggle-btn-v2">Beginner</button>
+          <button class="toggle-btn active" id="toggle-btn-v1">${v1Name}</button>
+          <button class="toggle-btn" id="toggle-btn-v2">${v2Name}</button>
         </div>
       </div>
       <div id="blog-detail-body-text" class="blog-detail-body-text">
