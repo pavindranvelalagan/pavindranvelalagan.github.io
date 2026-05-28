@@ -106,11 +106,52 @@ const blogBackBtn = document.getElementById('blog-back-btn');
 
 function renderBlogList() {
   if (!blogListContainer) return;
-  blogListContainer.innerHTML = BLOGS_DATA.map(post => `
-    <div class="blog-item" data-id="${post.id}">
+
+  // Render filter tabs
+  const filterTabsContainer = document.getElementById('blog-filter-tabs');
+  if (filterTabsContainer) {
+    const seriesSet = new Set();
+    BLOGS_DATA.forEach(post => {
+      const series = post.series || 'Generic';
+      seriesSet.add(series);
+    });
+    
+    const seriesList = Array.from(seriesSet).sort();
+    
+    let tabsHtml = `<button class="filter-tab active" data-filter="all" role="tab" aria-selected="true">All</button>`;
+    seriesList.forEach(series => {
+      tabsHtml += `<button class="filter-tab" data-filter="${series}" role="tab" aria-selected="false">${series}</button>`;
+    });
+    filterTabsContainer.innerHTML = tabsHtml;
+
+    // Add click listeners to tabs
+    const tabs = filterTabsContainer.querySelectorAll('.filter-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        filterBlogsBySeries(tab.dataset.filter);
+      });
+    });
+  }
+
+  // Render all blogs initially
+  renderBlogItems(BLOGS_DATA);
+}
+
+function renderBlogItems(blogsToRender) {
+  blogListContainer.innerHTML = blogsToRender.map(post => {
+    const seriesLabel = post.series && post.series !== 'Generic' ? `<span class="blog-series-badge">${post.series}</span>` : '';
+    return `
+    <div class="blog-item" data-id="${post.id}" data-series="${post.series || 'Generic'}">
       <div class="blog-item-info">
         <div class="blog-item-title-row">
           <span class="blog-item-title">[${post.title}]</span>
+          ${seriesLabel}
           <span class="blog-item-date">${post.date}</span>
         </div>
         <div class="blog-item-tags">
@@ -122,7 +163,7 @@ function renderBlogList() {
         <img src="${post.thumbnail}" alt="${post.title}" loading="lazy" />
       </div>
     </div>
-  `).join('');
+  `}).join('');
 
   // Add click listeners to items
   const blogItems = blogListContainer.querySelectorAll('.blog-item');
@@ -130,6 +171,17 @@ function renderBlogList() {
     item.addEventListener('click', () => {
       showBlogDetail(item.dataset.id);
     });
+  });
+}
+
+function filterBlogsBySeries(filter) {
+  const blogItems = blogListContainer.querySelectorAll('.blog-item');
+  blogItems.forEach(item => {
+    if (filter === 'all' || item.dataset.series === filter) {
+      item.style.display = 'flex';
+    } else {
+      item.style.display = 'none';
+    }
   });
 }
 
