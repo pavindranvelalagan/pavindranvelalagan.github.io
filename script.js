@@ -393,6 +393,7 @@ async function showBlogDetail(postId, updateHistory = true) {
   }
 
   const isVersioned = (post.filePathV1 && post.filePathV2) || (post.contentV1 && post.contentV2);
+  const isSingleMarkdown = !isVersioned && (post.filePath || (typeof post.content === 'string'));
   const referencesHtml = post.references.map(ref => `<li><a href="${ref.url}" target="_blank" rel="noopener">→ ${ref.text}</a></li>`).join('');
 
   let detailBodyHtml = '';
@@ -409,6 +410,22 @@ async function showBlogDetail(postId, updateHistory = true) {
       <div id="blog-detail-body-text" class="blog-detail-body-text">
         ${post.contentV1 ? parseMarkdownToHTML(post.contentV1) : '<div class="photo-loading">Loading blog content...</div>'}
       </div>
+    `;
+  } else if (isSingleMarkdown) {
+    const videoHtml = post.youtubeId ? `
+      <div class="blog-detail-video-container">
+        <iframe 
+          src="https://www.youtube.com/embed/${post.youtubeId}" 
+          title="YouTube video player" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen>
+        </iframe>
+      </div>` : '';
+    detailBodyHtml = `
+      <div id="blog-detail-body-text" class="blog-detail-body-text">
+        ${(typeof post.content === 'string') ? parseMarkdownToHTML(post.content) : '<div class="photo-loading">Loading blog content...</div>'}
+      </div>
+      ${videoHtml}
     `;
   } else {
     const paragraphsHtml = (post.content || []).map(p => `<p>${p}</p>`).join('');
@@ -467,7 +484,7 @@ async function showBlogDetail(postId, updateHistory = true) {
   blogDetailView.style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Load content asynchronously if versioned
+  // Load content asynchronously if versioned or single markdown file
   if (isVersioned) {
     const btnV1 = document.getElementById('toggle-btn-v1');
     const btnV2 = document.getElementById('toggle-btn-v2');
@@ -532,6 +549,16 @@ async function showBlogDetail(postId, updateHistory = true) {
         bodyText.classList.remove('fade-out');
       }, 150);
     });
+  } else if (isSingleMarkdown && post.filePath) {
+    const bodyText = document.getElementById('blog-detail-body-text');
+    let md = (typeof post.content === 'string') ? post.content : '';
+    try {
+      md = await fetchBlogMarkdown(post.filePath);
+    } catch (err) {
+      console.warn("Dynamic markdown fetching failed. Falling back to pre-compiled content.", err);
+      md = (typeof post.content === 'string') ? post.content : '';
+    }
+    bodyText.innerHTML = parseMarkdownToHTML(md);
   }
 }
 
