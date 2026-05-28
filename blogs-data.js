@@ -1,23 +1,6 @@
 // Auto-generated BLOGS_DATA with both filePath and CORS local fallback content
 const BLOGS_DATA = [
   {
-    "id": "fsdbsdgbsdf",
-    "title": "fsdbsdgbsdf",
-    "date": "May 28, 2026",
-    "keywords": [
-      "dsfgdfsg"
-    ],
-    "thumbnail": "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=600&q=80",
-    "excerpt": "dfbdfb",
-    "references": [],
-    "filePathV1": "blog/fsdbsdgbsdf/version-1.md",
-    "filePathV2": "blog/fsdbsdgbsdf/version-2.md",
-    "contentV1": "11111111111111111111",
-    "contentV2": "222222222222222",
-    "v1Name": "name 1",
-    "v2Name": "name2333"
-  },
-  {
     "id": "ada-vs-ampere-peracom-servers",
     "title": "Ada vs Ampere: A Practical Guide to PeraCom's GPU Servers",
     "date": "May 28, 2026",
