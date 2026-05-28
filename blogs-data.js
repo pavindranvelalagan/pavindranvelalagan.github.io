@@ -1,6 +1,19 @@
 // Auto-generated BLOGS_DATA with both filePath and CORS local fallback content
 const BLOGS_DATA = [
   {
+    "id": "dfhdfhdfh",
+    "title": "dfhdfhdfh",
+    "date": "May 28, 2026",
+    "keywords": [
+      "sfsdfg"
+    ],
+    "thumbnail": "blog/dfhdfhdfh/images/439921831_758980699696460_6385021490277089899_n.jpg",
+    "excerpt": "egefdgdf",
+    "references": [],
+    "filePath": "blog/dfhdfhdfh/content.md",
+    "content": "dfsgbdfgdgd\n\n\n![439921831_758980699696460_6385021490277089899_n.jpg](blog/dfhdfhdfh/images/439921831_758980699696460_6385021490277089899_n.jpg)\n\n\n![439840344_758979569696573_1470444549022684440_n.jpg](blog/dfhdfhdfh/images/439840344_758979569696573_1470444549022684440_n.jpg)\n!\n\n\nfsdgdfgfd\n\n\n[439840344_758979569696573_1470444549022684440_n.jpg](blog/dfhdfhdfh/images/439840344_758979569696573_1470444549022684440_n.jpg)\n\n\n\n"
+  },
+  {
     "id": "ada-vs-ampere-peracom-servers",
     "title": "Ada vs Ampere: A Practical Guide to PeraCom's GPU Servers",
     "date": "May 28, 2026",

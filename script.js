@@ -153,7 +153,9 @@ function parseInlineMarkdown(text) {
   cleanText = cleanText.replace(/_(.*?)_/g, '<em>$1</em>');
   // 3. Inline code (`code`)
   cleanText = cleanText.replace(/`(.*?)`/g, '<code>$1</code>');
-  // 4. Links ([text](url))
+  // 4. Images (![alt](url))
+  cleanText = cleanText.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" loading="lazy" />');
+  // 5. Links ([text](url))
   cleanText = cleanText.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
 
   return cleanText;
