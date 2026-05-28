@@ -9,7 +9,7 @@ function switchPage(targetPage, updateHistory = true) {
   pages.forEach(page => {
     page.classList.toggle('active', page.id === `page-${targetPage}`);
   });
-  
+
   // Reset blog view to list when navigating
   if (targetPage === 'blog') {
     hideBlogDetail(false);
@@ -22,14 +22,14 @@ function switchPage(targetPage, updateHistory = true) {
   if (targetPage === 'photography') {
     renderPhotography();
   }
-  
+
   if (updateHistory) {
     const url = new URL(window.location);
     url.searchParams.set('page', targetPage);
     url.searchParams.delete('blog');
     window.history.pushState({ page: targetPage }, '', url.href);
   }
-  
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -133,7 +133,255 @@ function renderBlogList() {
   });
 }
 
-function showBlogDetail(postId, updateHistory = true) {
+// ===== MARKDOWN PARSING HELPERS =====
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function parseInlineMarkdown(text) {
+  let cleanText = escapeHtml(text);
+
+  // 1. Bold (**text**)
+  cleanText = cleanText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // 2. Italic (*text* or _text_)
+  cleanText = cleanText.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  cleanText = cleanText.replace(/_(.*?)_/g, '<em>$1</em>');
+  // 3. Inline code (`code`)
+  cleanText = cleanText.replace(/`(.*?)`/g, '<code>$1</code>');
+  // 4. Links ([text](url))
+  cleanText = cleanText.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+  return cleanText;
+}
+
+function parseMarkdownToHTML(md) {
+  const lines = md.split('\n');
+  let html = '';
+  let inCodeBlock = false;
+  let codeContent = [];
+  let codeLang = '';
+  let inTable = false;
+  let tableRows = [];
+  let inList = false;
+  let listType = ''; // 'ul' or 'ol'
+  let listItems = [];
+  let paragraphLines = [];
+
+  function flushList() {
+    if (listItems.length > 0) {
+      html += `<${listType}>` + listItems.map(item => `<li>${parseInlineMarkdown(item)}</li>`).join('') + `</${listType}>`;
+      listItems = [];
+      inList = false;
+    }
+  }
+
+  function flushTable() {
+    if (tableRows.length > 0) {
+      let tableHtml = '<table>';
+      let startIdx = 0;
+      if (tableRows.length > 1 && tableRows[1].every(cell => cell.trim().match(/^:?-+:?$/) || cell.trim() === '')) {
+        tableHtml += '<thead><tr>' + tableRows[0].map(cell => `<th>${parseInlineMarkdown(cell.trim())}</th>`).join('') + '</tr></thead>';
+        startIdx = 2; // skip header and divider
+      }
+      tableHtml += '<tbody>';
+      for (let i = startIdx; i < tableRows.length; i++) {
+        if (tableRows[i].length === 1 && tableRows[i][0] === '') continue;
+        tableHtml += '<tr>' + tableRows[i].map(cell => `<td>${parseInlineMarkdown(cell.trim())}</td>`).join('') + '</tr>';
+      }
+      tableHtml += '</tbody></table>';
+      html += `<div class="table-container">${tableHtml}</div>`;
+      tableRows = [];
+      inTable = false;
+    }
+  }
+
+  function flushParagraph() {
+    if (paragraphLines.length > 0) {
+      html += `<p>${parseInlineMarkdown(paragraphLines.join(' '))}</p>`;
+      paragraphLines = [];
+    }
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+
+    // 1. Fenced Code Block
+    if (line.trim().startsWith('```')) {
+      if (inCodeBlock) {
+        const escapedCode = escapeHtml(codeContent.join('\n'));
+        html += `
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-block-lang">${codeLang || 'bash'}</span>
+              <button class="copy-code-btn" onclick="copyCodeText(this)">Copy</button>
+            </div>
+            <pre><code class="language-${codeLang || 'bash'}">${escapedCode}</code></pre>
+          </div>
+        `;
+        codeContent = [];
+        inCodeBlock = false;
+      } else {
+        flushList();
+        flushTable();
+        flushParagraph();
+        inCodeBlock = true;
+        codeLang = line.trim().substring(3).trim();
+      }
+      continue;
+    }
+
+    if (inCodeBlock) {
+      codeContent.push(line);
+      continue;
+    }
+
+    // 2. Indented Code Block (4 spaces of indentation and not empty)
+    if (!inTable && line.startsWith('    ') && line.trim() !== '') {
+      flushList();
+      flushTable();
+      flushParagraph();
+
+      let indentedContent = [];
+      while (i < lines.length && (lines[i].startsWith('    ') || lines[i].trim() === '')) {
+        indentedContent.push(lines[i].substring(4)); // Strip 4 spaces
+        i++;
+      }
+      i--; // Adjust index because loop increments it
+
+      const escapedCode = escapeHtml(indentedContent.join('\n'));
+      html += `
+        <div class="code-block-container">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="copy-code-btn" onclick="copyCodeText(this)">Copy</button>
+          </div>
+          <pre><code class="language-bash">${escapedCode}</code></pre>
+        </div>
+      `;
+      continue;
+    }
+
+    // 3. Table Rows
+    if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+      flushList();
+      flushParagraph();
+      inTable = true;
+      const cells = line.trim().split('|').slice(1, -1);
+      tableRows.push(cells);
+      continue;
+    } else if (inTable) {
+      flushTable();
+    }
+
+    // 4. Headers
+    if (line.trim().startsWith('#')) {
+      flushList();
+      flushTable();
+      flushParagraph();
+      const match = line.trim().match(/^(#{1,6})\s+(.*)$/);
+      if (match) {
+        const level = match[1].length;
+        const title = parseInlineMarkdown(match[2]);
+        const tag = `h${level + 1}`;
+        html += `<${tag}>${title}</${tag}>`;
+        continue;
+      }
+    }
+
+    // 5. Unordered List Items
+    if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
+      flushTable();
+      flushParagraph();
+      const content = line.trim().substring(2);
+      if (inList && listType === 'ul') {
+        listItems.push(content);
+      } else {
+        flushList();
+        inList = true;
+        listType = 'ul';
+        listItems.push(content);
+      }
+      continue;
+    }
+
+    // 6. Ordered List Items
+    if (line.trim().match(/^\d+\.\s+/)) {
+      flushTable();
+      flushParagraph();
+      const content = line.trim().replace(/^\d+\.\s+/, '');
+      if (inList && listType === 'ol') {
+        listItems.push(content);
+      } else {
+        flushList();
+        inList = true;
+        listType = 'ol';
+        listItems.push(content);
+      }
+      continue;
+    }
+
+    // Blank line
+    if (line.trim() === '') {
+      flushList();
+      flushTable();
+      flushParagraph();
+      continue;
+    }
+
+    // 7. Regular paragraph text line
+    flushList();
+    flushTable();
+    paragraphLines.push(line.trim());
+  }
+
+  // Flush remaining
+  flushList();
+  flushTable();
+  flushParagraph();
+
+  return html;
+}
+
+// Global copy handler for pre-formatted code blocks
+window.copyCodeText = function (btn) {
+  const codeElement = btn.closest('.code-block-container').querySelector('pre code');
+  if (!codeElement) return;
+  const text = codeElement.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const originalText = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(err => {
+    console.error('Failed to copy code: ', err);
+  });
+};
+
+// Memory cache to store fetched markdown content for instant tab transitions
+const blogContentCache = {};
+
+async function fetchBlogMarkdown(filePath) {
+  if (blogContentCache[filePath]) {
+    return blogContentCache[filePath];
+  }
+  const response = await fetch(filePath);
+  if (!response.ok) {
+    throw new Error(`Failed to load file: ${response.statusText}`);
+  }
+  const text = await response.text();
+  blogContentCache[filePath] = text;
+  return text;
+}
+
+async function showBlogDetail(postId, updateHistory = true) {
   const post = BLOGS_DATA.find(p => p.id === postId);
   if (!post) return;
 
@@ -144,10 +392,46 @@ function showBlogDetail(postId, updateHistory = true) {
     window.history.pushState({ path: url.href }, '', url.href);
   }
 
-  // Build the detail content HTML
-  const paragraphsHtml = post.content.map(p => `<p>${p}</p>`).join('');
-  const galleryHtml = post.images.map(img => `<img src="${img}" alt="Blog image" loading="lazy" />`).join('');
+  const isVersioned = (post.filePathV1 && post.filePathV2) || (post.contentV1 && post.contentV2);
   const referencesHtml = post.references.map(ref => `<li><a href="${ref.url}" target="_blank" rel="noopener">→ ${ref.text}</a></li>`).join('');
+
+  let detailBodyHtml = '';
+  if (isVersioned) {
+    detailBodyHtml = `
+      <div class="version-toggle-container">
+        <span class="toggle-label">Target Audience:</span>
+        <div class="version-toggle-capsule">
+          <div class="toggle-slider" id="toggle-slider"></div>
+          <button class="toggle-btn active" id="toggle-btn-v1">Intermediate</button>
+          <button class="toggle-btn" id="toggle-btn-v2">Beginner</button>
+        </div>
+      </div>
+      <div id="blog-detail-body-text" class="blog-detail-body-text">
+        ${post.contentV1 ? parseMarkdownToHTML(post.contentV1) : '<div class="photo-loading">Loading blog content...</div>'}
+      </div>
+    `;
+  } else {
+    const paragraphsHtml = (post.content || []).map(p => `<p>${p}</p>`).join('');
+    const galleryHtml = (post.images || []).map(img => `<img src="${img}" alt="Blog image" loading="lazy" />`).join('');
+    const videoHtml = post.youtubeId ? `
+      <div class="blog-detail-video-container">
+        <iframe 
+          src="https://www.youtube.com/embed/${post.youtubeId}" 
+          title="YouTube video player" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen>
+        </iframe>
+      </div>` : '';
+    detailBodyHtml = `
+      <div class="blog-detail-body-text">
+        ${paragraphsHtml}
+      </div>
+      <div class="blog-detail-gallery">
+        ${galleryHtml}
+      </div>
+      ${videoHtml}
+    `;
+  }
 
   blogDetailContent.innerHTML = `
     <header class="blog-detail-header">
@@ -167,20 +451,7 @@ function showBlogDetail(postId, updateHistory = true) {
     </header>
 
     <div class="blog-detail-body">
-      ${paragraphsHtml}
-      
-      <div class="blog-detail-gallery">
-        ${galleryHtml}
-      </div>
-
-      <div class="blog-detail-video-container">
-        <iframe 
-          src="https://www.youtube.com/embed/${post.youtubeId}" 
-          title="YouTube video player" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen>
-        </iframe>
-      </div>
+      ${detailBodyHtml}
 
       <div class="blog-detail-references">
         <h4>[References & Links]</h4>
@@ -191,10 +462,77 @@ function showBlogDetail(postId, updateHistory = true) {
     </div>
   `;
 
-  // Swap views
+  // Swap views to display detail immediately (showing loading state if fetching is required)
   blogListView.style.display = 'none';
   blogDetailView.style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Load content asynchronously if versioned
+  if (isVersioned) {
+    const btnV1 = document.getElementById('toggle-btn-v1');
+    const btnV2 = document.getElementById('toggle-btn-v2');
+    const slider = document.getElementById('toggle-slider');
+    const bodyText = document.getElementById('blog-detail-body-text');
+
+    let v1Md = post.contentV1 || '';
+    let v2Md = post.contentV2 || '';
+
+    // If file paths are provided, perform fetch
+    if (post.filePathV1 && post.filePathV2) {
+      try {
+        const [fetchedV1, fetchedV2] = await Promise.all([
+          fetchBlogMarkdown(post.filePathV1),
+          fetchBlogMarkdown(post.filePathV2)
+        ]);
+        v1Md = fetchedV1;
+        v2Md = fetchedV2;
+      } catch (err) {
+        console.warn("Dynamic markdown fetching failed (likely due to CORS under file:// protocol). Falling back to pre-compiled blog content.", err);
+        // CORS Fallback: Use the pre-packaged copy inside blogs-data.js
+        v1Md = post.contentV1 || '';
+        v2Md = post.contentV2 || '';
+
+        if (!v1Md || !v2Md) {
+          const errorMsg = `Error: Could not load the blog content from "${post.filePathV1}". <br><br><strong>Why is this happening?</strong><br>Browsers block local AJAX/fetch requests when HTML pages are opened directly as local files (using the <code>file://</code> protocol in the address bar).<br><br><strong>How to fix:</strong><br>1. Run a local web server (e.g. VS Code's "Live Server" extension, <code>npx serve</code>, or Python's <code>python -m http.server</code>).<br>2. Or compile the files using the blog compiler so they can be loaded offline.`;
+          v1Md = errorMsg;
+          v2Md = errorMsg;
+        }
+      }
+
+      // Display the loaded text (default to Version 1)
+      if (btnV1.classList.contains('active')) {
+        bodyText.innerHTML = parseMarkdownToHTML(v1Md);
+      } else {
+        bodyText.innerHTML = parseMarkdownToHTML(v2Md);
+      }
+    }
+
+    btnV1.addEventListener('click', () => {
+      if (btnV1.classList.contains('active')) return;
+      btnV1.classList.add('active');
+      btnV2.classList.remove('active');
+      slider.style.left = '0%';
+
+      bodyText.classList.add('fade-out');
+      setTimeout(() => {
+        bodyText.innerHTML = parseMarkdownToHTML(v1Md);
+        bodyText.classList.remove('fade-out');
+      }, 150);
+    });
+
+    btnV2.addEventListener('click', () => {
+      if (btnV2.classList.contains('active')) return;
+      btnV2.classList.add('active');
+      btnV1.classList.remove('active');
+      slider.style.left = '50%';
+
+      bodyText.classList.add('fade-out');
+      setTimeout(() => {
+        bodyText.innerHTML = parseMarkdownToHTML(v2Md);
+        bodyText.classList.remove('fade-out');
+      }, 150);
+    });
+  }
 }
 
 function hideBlogDetail(updateHistory = true) {
@@ -224,7 +562,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const blogId = urlParams.get('blog');
   const pageId = urlParams.get('page');
-  
+
   if (blogId) {
     switchPage('blog', false);
     showBlogDetail(blogId, false);
@@ -240,7 +578,7 @@ window.addEventListener('popstate', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const blogId = urlParams.get('blog');
   const pageId = urlParams.get('page');
-  
+
   if (blogId) {
     switchPage('blog', false);
     showBlogDetail(blogId, false);
@@ -252,7 +590,7 @@ window.addEventListener('popstate', () => {
 });
 
 // Copy link function
-window.copyShareLink = function(btn) {
+window.copyShareLink = function (btn) {
   navigator.clipboard.writeText(window.location.href).then(() => {
     const originalHTML = btn.innerHTML;
     btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
@@ -270,7 +608,7 @@ let instagramLoaded = false;
 function renderPhotography() {
   const photoGrid = document.getElementById('photo-grid');
   if (!photoGrid) return;
-  
+
   // Only render if we haven't rendered yet
   if (photoGrid.dataset.rendered === 'true') {
     if (window.instgrm && window.instgrm.Embeds) {
@@ -278,21 +616,21 @@ function renderPhotography() {
     }
     return;
   }
-  
+
   if (typeof INSTAGRAM_EMBEDS === 'undefined' || !INSTAGRAM_EMBEDS.length) {
     photoGrid.innerHTML = '<div class="photo-loading">No posts found.</div>';
     return;
   }
-  
+
   // Render embeds inside individual .photo-item divs
   photoGrid.innerHTML = INSTAGRAM_EMBEDS.map(embed => `
     <div class="photo-item">
       ${embed}
     </div>
   `).join('');
-  
+
   photoGrid.dataset.rendered = 'true';
-  
+
   // Load/process the Instagram embed script dynamically
   if (window.instgrm && window.instgrm.Embeds) {
     window.instgrm.Embeds.process();
