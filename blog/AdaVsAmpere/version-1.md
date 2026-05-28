@@ -1,4 +1,4 @@
-# Ada vs Ampere for PeraCom GPU Users editsss
+# Ada vs Ampere for PeraCom GPU Users
 
 ## 1. Purpose
 
