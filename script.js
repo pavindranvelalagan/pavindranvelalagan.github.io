@@ -115,14 +115,14 @@ function renderBlogList() {
       const series = post.series || 'Generic';
       seriesSet.add(series);
     });
-    
+
     const seriesList = Array.from(seriesSet).sort();
-    
-    let optionsHtml = `<option value="all">All Series</option>`;
+
+    let optionsHtml = `<option value="all">All Blogs</option>`;
     seriesList.forEach(series => {
       optionsHtml += `<option value="${series}">${series}</option>`;
     });
-    
+
     filterTabsContainer.innerHTML = `
       <select id="blog-series-select" class="blog-series-select" aria-label="Blog Series Filter">
         ${optionsHtml}
@@ -216,7 +216,7 @@ function parseInlineMarkdown(text) {
 
   // 4. Bold (**text**)
   cleanText = cleanText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  
+
   // 5. Italic (*text* or _text_)
   cleanText = cleanText.replace(/\*(.*?)\*/g, '<em>$1</em>');
   cleanText = cleanText.replace(/_(.*?)_/g, '<em>$1</em>');
