@@ -107,8 +107,8 @@ const blogBackBtn = document.getElementById('blog-back-btn');
 function renderBlogList() {
   if (!blogListContainer) return;
 
-  // Render filter tabs
-  const filterTabsContainer = document.getElementById('blog-filter-tabs');
+  // Render filter tabs as a dropdown
+  const filterTabsContainer = document.getElementById('blog-filter-container');
   if (filterTabsContainer) {
     const seriesSet = new Set();
     BLOGS_DATA.forEach(post => {
@@ -118,24 +118,21 @@ function renderBlogList() {
     
     const seriesList = Array.from(seriesSet).sort();
     
-    let tabsHtml = `<button class="filter-tab active" data-filter="all" role="tab" aria-selected="true">All</button>`;
+    let optionsHtml = `<option value="all">All Series</option>`;
     seriesList.forEach(series => {
-      tabsHtml += `<button class="filter-tab" data-filter="${series}" role="tab" aria-selected="false">${series}</button>`;
+      optionsHtml += `<option value="${series}">${series}</option>`;
     });
-    filterTabsContainer.innerHTML = tabsHtml;
+    
+    filterTabsContainer.innerHTML = `
+      <select id="blog-series-select" class="blog-series-select" aria-label="Blog Series Filter">
+        ${optionsHtml}
+      </select>
+    `;
 
-    // Add click listeners to tabs
-    const tabs = filterTabsContainer.querySelectorAll('.filter-tab');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => {
-          t.classList.remove('active');
-          t.setAttribute('aria-selected', 'false');
-        });
-        tab.classList.add('active');
-        tab.setAttribute('aria-selected', 'true');
-        filterBlogsBySeries(tab.dataset.filter);
-      });
+    // Add change listener to dropdown
+    const select = document.getElementById('blog-series-select');
+    select.addEventListener('change', (e) => {
+      filterBlogsBySeries(e.target.value);
     });
   }
 

@@ -4,7 +4,7 @@
 
 When I started working on our Unitree Go2 Edu robotics project, I had almost zero experience with department servers, Linux server workflows, SSH, scratch disks, GPU usage, or running simulations remotely.
 
-My goal was simple: I wanted to run robotics and 3D reconstruction related workloads for the Unitree Go2 Edu quadruped robot. For that, I needed tools like ROS 2, Gazebo, RViz, CUDA, and 3D Gaussian Splatting related libraries.
+My goal was to run robotics and 3D reconstruction related workloads for the Unitree Go2 Edu quadruped robot. For that, I needed tools like ROS 2, Gazebo, RViz, CUDA, and 3D Gaussian Splatting related libraries.
 
 That is when I started exploring the GPU servers in the Department of Computer Engineering, University of Peradeniya.
 
