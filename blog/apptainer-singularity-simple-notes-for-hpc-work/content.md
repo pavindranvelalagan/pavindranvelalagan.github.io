@@ -28,7 +28,7 @@ Basic idea:
 
 ## 3. The Big Picture
 
-When we work on a normal laptop, installing software is usually simple. We can use `apt`, `pip`, `conda`, or build things from source. But on a shared server or HPC system, it becomes more complicated.
+When we work on a normal laptop, installing software is usually simple. We can use apt, pip, conda, or build things from source. But on a shared server or HPC system, it becomes more complicated.
 
 The server may have a different operating system version. We may not have `sudo` access. Different projects may need different software versions. One project may need Ubuntu 22.04, another may need Ubuntu 24.04. One project may need ROS 2 Humble, another may need CUDA, PyTorch, OpenCV, Gazebo, or some old library version.
 
