@@ -9,7 +9,8 @@ const BLOGS_DATA = [
       "Apptainer",
       "Singularity",
       "Container",
-      "HPC"
+      "HPC",
+      "GPU Servers"
     ],
     "thumbnail": "https://ciq.com/static/d0bd1e2b72176d928c4b97b72fd2acb2/3b606/Apptainer.webp",
     "excerpt": "Simple notes on using Apptainer for HPC work. It explains how to manage software environments and use containers to run projects on shared servers without needing root access.",
