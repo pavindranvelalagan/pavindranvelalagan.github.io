@@ -23,6 +23,10 @@ function switchPage(targetPage, updateHistory = true) {
     renderPhotography();
   }
 
+  if (targetPage === 'thoughts') {
+    renderThoughts();
+  }
+
   if (updateHistory) {
     const url = new URL(window.location);
     url.searchParams.set('page', targetPage);
@@ -778,5 +782,44 @@ function renderPhotography() {
     script.async = true;
     document.body.appendChild(script);
   }
+}
+
+// ===== THOUGHTS RENDERING & LOGIC =====
+function renderThoughts() {
+  const thoughtsGrid = document.getElementById('thoughts-grid');
+  if (!thoughtsGrid) return;
+
+  if (typeof THOUGHTS_DATA === 'undefined' || !THOUGHTS_DATA.length) {
+    thoughtsGrid.innerHTML = '<div class="photo-loading">No thoughts found.</div>';
+    return;
+  }
+
+  // Hex color codes mapped to class names defined in style.css
+  const colorMap = {
+    '#fff475': 'yellow',
+    '#cbf0f8': 'blue',
+    '#ccff90': 'green',
+    '#fdcfe8': 'pink',
+    '#d7aefb': 'purple',
+    '#f28b82': 'red',
+    '#a7ffeb': 'teal',
+    '#e8eaed': 'grey'
+  };
+
+  // Render cards sorted chronologically or in order of data file (prepend new)
+  thoughtsGrid.innerHTML = THOUGHTS_DATA.map(thought => {
+    const colorClass = colorMap[thought.color] || 'yellow';
+    // Use parseInlineMarkdown to allow links, bold, italics in sticky notes!
+    const parsedText = parseInlineMarkdown(thought.text);
+    
+    return `
+      <div class="thought-card thought-color-${colorClass}" id="thought-${thought.id}">
+        <div class="thought-card-text">${parsedText}</div>
+        <div class="thought-card-footer">
+          <span class="thought-card-date">${thought.date}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 

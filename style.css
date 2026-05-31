@@ -1234,3 +1234,109 @@ code {
 .blog-series-select:focus {
   border-color: var(--text-muted);
 }
+
+/* ===== THOUGHTS STICKY NOTES PAGE ===== */
+.thoughts-intro {
+  margin-bottom: 28px;
+}
+
+.thoughts-intro p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Masonry Column Grid */
+.thoughts-grid {
+  column-count: 3;
+  column-gap: 20px;
+  width: 100%;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .thoughts-grid {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .thoughts-grid {
+    column-count: 1;
+    column-gap: 0;
+  }
+}
+
+/* Sticky Card Styling */
+.thought-card {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  padding: 22px;
+  box-shadow: 0 4px 8px var(--shadow);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  break-inside: avoid-column;
+  -webkit-column-break-inside: avoid;
+  transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.28s ease, border-color 0.28s ease;
+  position: relative;
+  overflow: hidden;
+  /* Sticky notes text should always be dark for perfect readability on pastels */
+  color: #1c1c1e !important;
+  text-align: left;
+}
+
+.thought-card:hover {
+  transform: translateY(-5px) rotate(0.5deg);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.thought-card-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: #1c1c1e !important;
+}
+
+.thought-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1px dashed rgba(0, 0, 0, 0.08);
+  padding-top: 10px;
+  margin-top: auto;
+}
+
+.thought-card-date {
+  font-size: 0.7rem;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Pastel Sticky Note Color Themes (matching Google Keep & Windows sticky notes) */
+.thought-color-yellow { background-color: #fff475 !important; }
+.thought-color-blue { background-color: #cbf0f8 !important; }
+.thought-color-green { background-color: #ccff90 !important; }
+.thought-color-pink { background-color: #fdcfe8 !important; }
+.thought-color-purple { background-color: #d7aefb !important; }
+.thought-color-red { background-color: #f28b82 !important; }
+.thought-color-teal { background-color: #a7ffeb !important; }
+.thought-color-grey { background-color: #e8eaed !important; }
+
+/* Micro-animation tweak: random subtle tilt for realistic sticky-note look */
+.thoughts-grid > .thought-card:nth-child(2n) {
+  transform: rotate(-0.5deg);
+}
+.thoughts-grid > .thought-card:nth-child(3n) {
+  transform: rotate(0.5deg);
+}
+.thoughts-grid > .thought-card:nth-child(2n):hover,
+.thoughts-grid > .thought-card:nth-child(3n):hover {
+  transform: translateY(-5px) scale(1.02) rotate(0deg);
+}
+
