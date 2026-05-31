@@ -51,6 +51,7 @@
 html {
   font-size: 14px;
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -164,6 +165,7 @@ body {
   gap: 8px;
   font-size: 0.78rem;
   color: var(--text-muted);
+  flex-wrap: wrap;
 }
 
 .header-links a {
@@ -1363,6 +1365,11 @@ code {
     align-items: flex-start;
     flex-direction: row;
     gap: 6px;
+  }
+
+  .theme-toggle {
+    top: 14px;
+    right: 16px;
   }
 
   /* Make audience version toggle switch stack vertically on narrow screens to prevent spillover */
