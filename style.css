@@ -1160,38 +1160,24 @@ code {
   font-style: italic;
 }
 
-/* Masonry Column Grid */
+/* Grid Layout for Thoughts Sticky Notes */
 .thoughts-grid {
-  column-count: 3;
-  column-gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
   width: 100%;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .thoughts-grid {
-    column-count: 2;
-  }
-}
-
-@media (max-width: 600px) {
-  .thoughts-grid {
-    column-count: 1;
-    column-gap: 0;
-  }
+  align-items: start;
 }
 
 /* Sticky Card Styling */
 .thought-card {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  margin-bottom: 20px;
   border-radius: 8px;
   padding: 22px;
   box-shadow: 0 4px 8px var(--shadow);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  break-inside: avoid-column;
-  -webkit-column-break-inside: avoid;
   transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.28s ease, border-color 0.28s ease;
   position: relative;
   overflow: hidden;
@@ -1263,12 +1249,7 @@ code {
   }
 }
 
-/* Laptop and small desktops (Thoughts page goes to 2 columns) */
-@media (max-width: 900px) {
-  .thoughts-grid {
-    column-count: 2;
-  }
-}
+/* Laptop and small desktops columns handled automatically by grid */
 
 /* Tablets in Portrait viewports */
 @media (max-width: 768px) {
@@ -1346,13 +1327,7 @@ code {
   }
 }
 
-/* Small tablets / wide mobile phones (Thoughts page goes to 1 column) */
-@media (max-width: 600px) {
-  .thoughts-grid {
-    column-count: 1;
-    column-gap: 0;
-  }
-}
+/* Small tablets / wide mobile phones columns handled automatically by grid */
 
 /* Mobile phones (portrait view) */
 @media (max-width: 480px) {
