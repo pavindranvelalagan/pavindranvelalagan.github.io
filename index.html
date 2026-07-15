@@ -446,6 +446,807 @@
   <script src="blogs-data.js"></script>
   <script src="thoughts-data.js"></script>
   <script src="script.js"></script>
+
+  <!-- Extended GA4 analytics instrumentation -->
+  <script>
+    (() => {
+      "use strict";
+
+      const MEASUREMENT_ID = "G-84J6QSXKP3";
+      const SCROLL_THRESHOLDS = [25, 50, 75, 90, 100];
+      const ENGAGEMENT_MILESTONES = [15, 30, 60, 120, 300, 600];
+      const DOWNLOAD_EXTENSIONS = new Set([
+        "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx",
+        "zip", "rar", "7z", "csv", "txt", "rtf"
+      ]);
+
+      const state = {
+        currentSection: "about",
+        currentArticle: null,
+        sectionSeconds: 0,
+        articleSeconds: 0,
+        activeSeconds: 0,
+        maxScrollPercent: 0,
+        scrollMilestones: new Map(),
+        engagementMilestones: new Set(),
+        projectImpressions: new Set(),
+        exitSent: false,
+        vitalsSent: false,
+        lcp: 0,
+        cls: 0,
+        inp: 0,
+        fcp: 0
+      };
+
+      const cleanText = (value, maxLength = 150) => {
+        return String(value || "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .slice(0, maxLength);
+      };
+
+      const slugify = (value) => {
+        return cleanText(value, 120)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "") || "item";
+      };
+
+      const getSectionName = (element = null) => {
+        const section = element?.closest?.(".page") ||
+          document.querySelector(".page.active");
+        return section?.id?.replace(/^page-/, "") || state.currentSection || "unknown";
+      };
+
+      const getContextName = () => {
+        if (state.currentArticle) {
+          return `blog:${slugify(state.currentArticle)}`;
+        }
+        return `section:${state.currentSection}`;
+      };
+
+      const getLinkDomain = (href) => {
+        try {
+          return new URL(href, window.location.href).hostname || "internal";
+        } catch {
+          return "unknown";
+        }
+      };
+
+      const safeHref = (anchor) => {
+        const rawHref = anchor?.getAttribute?.("href") || "";
+        if (/^(mailto:|tel:)/i.test(rawHref)) {
+          return "";
+        }
+
+        try {
+          const url = new URL(anchor.href, window.location.href);
+          url.searchParams.delete("email");
+          url.searchParams.delete("name");
+          return url.href.slice(0, 500);
+        } catch {
+          return rawHref.slice(0, 500);
+        }
+      };
+
+      const track = (eventName, parameters = {}) => {
+        if (typeof window.gtag !== "function") {
+          return;
+        }
+
+        const payload = {
+          ...parameters,
+          page_section: parameters.page_section || getSectionName(),
+          transport_type: "beacon"
+        };
+
+        window.gtag("event", eventName, payload);
+      };
+
+      const virtualPageView = (path, title) => {
+        const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+        track("page_view", {
+          page_location: `${window.location.origin}${window.location.pathname}#${normalizedPath.slice(1)}`,
+          page_path: normalizedPath,
+          page_title: cleanText(title, 100)
+        });
+      };
+
+      const sendSectionEngagement = () => {
+        if (!state.currentSection || state.sectionSeconds < 1) {
+          state.sectionSeconds = 0;
+          return;
+        }
+
+        track("section_engagement", {
+          section_name: state.currentSection,
+          engagement_time_seconds: state.sectionSeconds
+        });
+
+        state.sectionSeconds = 0;
+      };
+
+      const sendArticleEngagement = () => {
+        if (!state.currentArticle || state.articleSeconds < 1) {
+          state.articleSeconds = 0;
+          return;
+        }
+
+        track("blog_article_engagement", {
+          article_title: cleanText(state.currentArticle, 120),
+          engagement_time_seconds: state.articleSeconds
+        });
+
+        state.articleSeconds = 0;
+      };
+
+      const switchSection = (sectionName, source = "navigation") => {
+        const nextSection = cleanText(sectionName, 60) || "unknown";
+
+        if (nextSection !== state.currentSection) {
+          sendSectionEngagement();
+          state.currentSection = nextSection;
+          state.sectionSeconds = 0;
+        }
+
+        track("section_view", {
+          section_name: nextSection,
+          navigation_source: source
+        });
+
+        virtualPageView(`/${nextSection}`, `${document.title} | ${nextSection}`);
+      };
+
+      const getBlogArticleTitle = () => {
+        const container = document.getElementById("blog-detail-content");
+        if (!container) {
+          return "";
+        }
+
+        const heading = container.querySelector(
+          "h1, h2, .blog-title, .blog-detail-title, [data-blog-title]"
+        );
+
+        return cleanText(
+          heading?.getAttribute?.("data-blog-title") ||
+          heading?.textContent ||
+          container.firstElementChild?.textContent,
+          120
+        );
+      };
+
+      const isBlogDetailVisible = () => {
+        const detail = document.getElementById("blog-detail-view");
+        if (!detail) {
+          return false;
+        }
+
+        return window.getComputedStyle(detail).display !== "none";
+      };
+
+      const syncBlogArticleState = () => {
+        const visible = isBlogDetailVisible();
+        const title = visible ? getBlogArticleTitle() : "";
+
+        if (!visible || !title) {
+          if (state.currentArticle) {
+            sendArticleEngagement();
+            state.currentArticle = null;
+            state.articleSeconds = 0;
+          }
+          return;
+        }
+
+        if (title === state.currentArticle) {
+          return;
+        }
+
+        sendArticleEngagement();
+        state.currentArticle = title;
+        state.articleSeconds = 0;
+
+        track("blog_article_view", {
+          article_title: title,
+          article_slug: slugify(title)
+        });
+
+        virtualPageView(`/blog/${slugify(title)}`, `${document.title} | ${title}`);
+      };
+
+      const recordScrollDepth = () => {
+        const root = document.documentElement;
+        const scrollableHeight = Math.max(
+          root.scrollHeight - window.innerHeight,
+          1
+        );
+
+        let percent = Math.round((window.scrollY / scrollableHeight) * 100);
+        percent = Math.max(0, Math.min(100, percent));
+
+        if (percent >= 99) {
+          percent = 100;
+        }
+
+        state.maxScrollPercent = Math.max(state.maxScrollPercent, percent);
+
+        const context = getContextName();
+        if (!state.scrollMilestones.has(context)) {
+          state.scrollMilestones.set(context, new Set());
+        }
+
+        const reached = state.scrollMilestones.get(context);
+
+        SCROLL_THRESHOLDS.forEach((threshold) => {
+          if (percent >= threshold && !reached.has(threshold)) {
+            reached.add(threshold);
+
+            track("scroll_depth", {
+              scroll_percent: threshold,
+              content_context: context,
+              article_title: state.currentArticle || undefined,
+              section_name: state.currentSection
+            });
+          }
+        });
+      };
+
+      const trackLandingContext = () => {
+        const params = new URLSearchParams(window.location.search);
+        let referrerDomain = "(direct)";
+
+        if (document.referrer) {
+          try {
+            referrerDomain = new URL(document.referrer).hostname || "(direct)";
+          } catch {
+            referrerDomain = "(unknown)";
+          }
+        }
+
+        track("landing_context", {
+          landing_page: window.location.pathname,
+          referrer_domain: referrerDomain,
+          campaign_source: cleanText(params.get("utm_source") || "(not set)", 80),
+          campaign_medium: cleanText(params.get("utm_medium") || "(not set)", 80),
+          campaign_name: cleanText(params.get("utm_campaign") || "(not set)", 100)
+        });
+      };
+
+      const detectSocialPlatform = (hostname) => {
+        const host = hostname.toLowerCase();
+
+        if (host.includes("linkedin.com")) return "linkedin";
+        if (host.includes("github.com")) return "github";
+        if (host.includes("instagram.com")) return "instagram";
+        if (host === "x.com" || host.includes("twitter.com")) return "x";
+        if (host.includes("youtube.com") || host.includes("youtu.be")) return "youtube";
+        if (host.includes("facebook.com")) return "facebook";
+        if (host.includes("medium.com")) return "medium";
+
+        return "";
+      };
+
+      const trackAnchorClick = (anchor) => {
+        const rawHref = anchor.getAttribute("href") || "";
+        const linkText = cleanText(
+          anchor.getAttribute("aria-label") ||
+          anchor.getAttribute("title") ||
+          anchor.textContent,
+          120
+        );
+        const sectionName = getSectionName(anchor);
+        const linkDomain = getLinkDomain(anchor.href || rawHref);
+        const isMail = rawHref.toLowerCase().startsWith("mailto:");
+        const isTel = rawHref.toLowerCase().startsWith("tel:");
+
+        let parsedUrl = null;
+        try {
+          parsedUrl = new URL(anchor.href, window.location.href);
+        } catch {
+          parsedUrl = null;
+        }
+
+        const isExternal = Boolean(
+          parsedUrl &&
+          /^https?:$/i.test(parsedUrl.protocol) &&
+          parsedUrl.origin !== window.location.origin
+        );
+
+        track("link_click", {
+          link_text: linkText,
+          link_domain: linkDomain,
+          link_url: safeHref(anchor),
+          link_type: isMail ? "email" : isTel ? "telephone" : isExternal ? "outbound" : "internal",
+          page_section: sectionName
+        });
+
+        if (isMail || isTel) {
+          track("contact_click", {
+            contact_method: isMail ? "email" : "telephone",
+            link_text: linkText,
+            page_section: sectionName
+          });
+          return;
+        }
+
+        if (isExternal) {
+          track("outbound_link_click", {
+            link_text: linkText,
+            link_domain: linkDomain,
+            link_url: safeHref(anchor),
+            page_section: sectionName
+          });
+        }
+
+        const socialPlatform = detectSocialPlatform(linkDomain);
+        if (socialPlatform) {
+          track("social_click", {
+            social_platform: socialPlatform,
+            link_text: linkText,
+            page_section: sectionName
+          });
+        }
+
+        const path = parsedUrl?.pathname || rawHref;
+        const extensionMatch = path.match(/\.([a-z0-9]+)$/i);
+        const extension = extensionMatch?.[1]?.toLowerCase() || "";
+
+        if (DOWNLOAD_EXTENSIONS.has(extension)) {
+          const fileName = decodeURIComponent(path.split("/").pop() || "");
+
+          track("document_download", {
+            file_name: cleanText(fileName, 120),
+            file_extension: extension,
+            link_text: linkText,
+            page_section: sectionName
+          });
+        }
+
+        if (
+          /resume|cv/i.test(linkText) ||
+          /resume|cv/i.test(path)
+        ) {
+          track("resume_click", {
+            link_text: linkText || "resume",
+            file_name: cleanText(decodeURIComponent(path.split("/").pop() || ""), 120)
+          });
+        }
+
+        const projectItem = anchor.closest(".project-item");
+        if (projectItem) {
+          const projectTitle = cleanText(
+            projectItem.querySelector(".project-title")?.textContent,
+            120
+          );
+          const category = cleanText(projectItem.dataset.category, 50);
+          const clickTarget = anchor.classList.contains("github-icon")
+            ? "github_icon"
+            : anchor.classList.contains("pub-link")
+              ? "publication_link"
+              : "project_title";
+
+          track("project_click", {
+            project_name: projectTitle,
+            project_category: category,
+            click_target: clickTarget,
+            link_domain: linkDomain,
+            link_url: safeHref(anchor)
+          });
+        }
+
+        if (
+          anchor.classList.contains("pub-link") ||
+          /mdpi\.com$/i.test(linkDomain) ||
+          /paper|publication|research/i.test(linkText)
+        ) {
+          track("publication_click", {
+            publication_title: cleanText(
+              anchor.closest(".project-item, .achievement-item")
+                ?.querySelector(".project-title, .achievement-title")
+                ?.textContent || linkText,
+              150
+            ),
+            link_domain: linkDomain
+          });
+        }
+
+        if (anchor.closest(".achievement-item")) {
+          track("achievement_link_click", {
+            achievement_title: cleanText(
+              anchor.closest(".achievement-item")
+                ?.querySelector(".achievement-title")
+                ?.textContent,
+              150
+            ),
+            link_domain: linkDomain
+          });
+        }
+      };
+
+      const setupProjectImpressions = () => {
+        if (!("IntersectionObserver" in window)) {
+          return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting || entry.intersectionRatio < 0.5) {
+              return;
+            }
+
+            const item = entry.target;
+            const title = cleanText(
+              item.querySelector(".project-title")?.textContent,
+              120
+            );
+
+            if (!title || state.projectImpressions.has(title)) {
+              return;
+            }
+
+            state.projectImpressions.add(title);
+
+            track("project_impression", {
+              project_name: title,
+              project_category: cleanText(item.dataset.category, 50)
+            });
+          });
+        }, {
+          threshold: [0.5]
+        });
+
+        document.querySelectorAll(".project-item").forEach((item) => {
+          observer.observe(item);
+        });
+      };
+
+      const setupPerformanceTracking = () => {
+        const supported = window.PerformanceObserver?.supportedEntryTypes || [];
+
+        try {
+          if (supported.includes("largest-contentful-paint")) {
+            const lcpObserver = new PerformanceObserver((list) => {
+              const entries = list.getEntries();
+              const last = entries[entries.length - 1];
+              if (last) {
+                state.lcp = Math.round(last.startTime);
+              }
+            });
+            lcpObserver.observe({ type: "largest-contentful-paint", buffered: true });
+          }
+        } catch {}
+
+        try {
+          if (supported.includes("layout-shift")) {
+            const clsObserver = new PerformanceObserver((list) => {
+              list.getEntries().forEach((entry) => {
+                if (!entry.hadRecentInput) {
+                  state.cls += entry.value;
+                }
+              });
+            });
+            clsObserver.observe({ type: "layout-shift", buffered: true });
+          }
+        } catch {}
+
+        try {
+          if (supported.includes("event")) {
+            const inpObserver = new PerformanceObserver((list) => {
+              list.getEntries().forEach((entry) => {
+                if (entry.interactionId && entry.duration > state.inp) {
+                  state.inp = Math.round(entry.duration);
+                }
+              });
+            });
+            inpObserver.observe({
+              type: "event",
+              buffered: true,
+              durationThreshold: 40
+            });
+          }
+        } catch {}
+
+        const paints = performance.getEntriesByType("paint");
+        const fcp = paints.find((entry) => entry.name === "first-contentful-paint");
+        if (fcp) {
+          state.fcp = Math.round(fcp.startTime);
+        } else {
+          try {
+            if (supported.includes("paint")) {
+              const paintObserver = new PerformanceObserver((list) => {
+                const entry = list.getEntries()
+                  .find((item) => item.name === "first-contentful-paint");
+                if (entry) {
+                  state.fcp = Math.round(entry.startTime);
+                }
+              });
+              paintObserver.observe({ type: "paint", buffered: true });
+            }
+          } catch {}
+        }
+
+        window.addEventListener("load", () => {
+          window.setTimeout(() => {
+            const nav = performance.getEntriesByType("navigation")[0];
+            if (!nav) {
+              return;
+            }
+
+            track("page_performance", {
+              ttfb_ms: Math.round(nav.responseStart),
+              dom_content_loaded_ms: Math.round(nav.domContentLoadedEventEnd),
+              page_load_ms: Math.round(nav.loadEventEnd),
+              transfer_size_kb: Math.round((nav.transferSize || 0) / 1024)
+            });
+          }, 0);
+        }, { once: true });
+      };
+
+      const sendWebVitals = () => {
+        if (state.vitalsSent) {
+          return;
+        }
+
+        state.vitalsSent = true;
+
+        track("web_vitals_summary", {
+          lcp_ms: state.lcp || 0,
+          cls_score: Number(state.cls.toFixed(4)),
+          inp_ms: state.inp || 0,
+          fcp_ms: state.fcp || 0
+        });
+      };
+
+      const sendPageExit = () => {
+        if (state.exitSent) {
+          return;
+        }
+
+        state.exitSent = true;
+        sendSectionEngagement();
+        sendArticleEngagement();
+        sendWebVitals();
+
+        track("page_exit", {
+          active_time_seconds: state.activeSeconds,
+          maximum_scroll_percent: state.maxScrollPercent,
+          exit_section: state.currentSection,
+          exit_article: state.currentArticle || undefined
+        });
+      };
+
+      window.addEventListener("error", (event) => {
+        track("javascript_error", {
+          error_message: cleanText(event.message || "Unknown JavaScript error", 150),
+          error_file: cleanText(event.filename?.split("/").pop(), 80),
+          error_line: event.lineno || 0,
+          error_column: event.colno || 0
+        });
+      });
+
+      window.addEventListener("unhandledrejection", (event) => {
+        track("unhandled_promise_rejection", {
+          error_message: cleanText(
+            event.reason?.message || event.reason || "Unhandled promise rejection",
+            150
+          )
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        const navLink = event.target.closest(".nav-link[data-page]");
+        if (navLink) {
+          const sectionName = navLink.dataset.page || "unknown";
+          window.setTimeout(() => switchSection(sectionName, "main_navigation"), 0);
+        }
+
+        const anchor = event.target.closest("a");
+        if (anchor) {
+          trackAnchorClick(anchor);
+        }
+
+        const button = event.target.closest("button");
+        if (button) {
+          const buttonText = cleanText(
+            button.getAttribute("aria-label") ||
+            button.getAttribute("title") ||
+            button.textContent,
+            100
+          );
+
+          track("button_click", {
+            button_id: cleanText(button.id, 80),
+            button_text: buttonText,
+            page_section: getSectionName(button)
+          });
+        }
+
+        const filterTab = event.target.closest(".filter-tab[data-filter]");
+        if (filterTab) {
+          track("project_filter", {
+            filter_name: cleanText(filterTab.dataset.filter, 50)
+          });
+        }
+
+        const blogFilterButton = event.target.closest(
+          "#blog-filter-container button, #blog-filter-container [data-filter]"
+        );
+        if (blogFilterButton) {
+          track("blog_filter", {
+            filter_name: cleanText(
+              blogFilterButton.dataset.filter ||
+              blogFilterButton.textContent,
+              80
+            )
+          });
+        }
+
+        const blogListItem = event.target.closest(
+          "#blog-list-container a, #blog-list-container button, " +
+          "#blog-list-container [role='button'], #blog-list-container .blog-item, " +
+          "#blog-list-container .blog-card"
+        );
+        if (blogListItem) {
+          const title = cleanText(
+            blogListItem.querySelector?.(
+              "h1, h2, h3, .blog-title, [data-blog-title]"
+            )?.textContent ||
+            blogListItem.getAttribute?.("data-blog-title") ||
+            blogListItem.textContent,
+            120
+          );
+
+          track("blog_article_click", {
+            article_title: title,
+            article_slug: slugify(title)
+          });
+
+          window.setTimeout(syncBlogArticleState, 0);
+        }
+
+        if (event.target.closest("#blog-back-btn")) {
+          track("blog_back_to_list", {
+            article_title: state.currentArticle || undefined
+          });
+          window.setTimeout(syncBlogArticleState, 0);
+        }
+
+        const thoughtItem = event.target.closest(
+          "#thoughts-grid a, #thoughts-grid button, #thoughts-grid [role='button'], " +
+          "#thoughts-grid .thought-item, #thoughts-grid .thought-card"
+        );
+        if (thoughtItem) {
+          track("thought_open", {
+            thought_title: cleanText(
+              thoughtItem.querySelector?.("h1, h2, h3, .thought-title")?.textContent ||
+              thoughtItem.textContent,
+              120
+            )
+          });
+        }
+
+        const photoElement = event.target.closest("#photo-grid img, #photo-grid a");
+        if (photoElement) {
+          const image = photoElement.matches("img")
+            ? photoElement
+            : photoElement.querySelector("img");
+
+          track("photo_open", {
+            photo_label: cleanText(
+              image?.alt ||
+              photoElement.getAttribute("aria-label") ||
+              photoElement.textContent,
+              120
+            )
+          });
+        }
+
+        if (
+          event.target.closest(".lightbox-close") ||
+          event.target.id === "lightbox"
+        ) {
+          track("photo_lightbox_close");
+        }
+
+        if (event.target.closest("#theme-toggle")) {
+          window.setTimeout(() => {
+            track("theme_change", {
+              selected_theme: cleanText(
+                document.documentElement.dataset.theme ||
+                document.body.dataset.theme ||
+                "unknown",
+                30
+              )
+            });
+          }, 0);
+        }
+      });
+
+      document.addEventListener("change", (event) => {
+        const select = event.target.closest("#blog-filter-container select");
+        if (select) {
+          track("blog_filter", {
+            filter_name: cleanText(select.value, 80),
+            filter_method: "select"
+          });
+        }
+      });
+
+      document.addEventListener("copy", () => {
+        track("content_copy", {
+          content_context: getContextName()
+        });
+      });
+
+      window.addEventListener("scroll", recordScrollDepth, { passive: true });
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+          sendWebVitals();
+        }
+      });
+
+      window.addEventListener("pagehide", sendPageExit);
+
+      const blogDetail = document.getElementById("blog-detail-view");
+      if (blogDetail) {
+        const blogObserver = new MutationObserver(() => {
+          window.setTimeout(syncBlogArticleState, 0);
+        });
+
+        blogObserver.observe(blogDetail, {
+          attributes: true,
+          attributeFilter: ["style", "class", "hidden"],
+          childList: true,
+          subtree: true
+        });
+      }
+
+      window.setInterval(() => {
+        if (document.visibilityState !== "visible") {
+          return;
+        }
+
+        state.activeSeconds += 1;
+        state.sectionSeconds += 1;
+
+        if (state.currentArticle && isBlogDetailVisible()) {
+          state.articleSeconds += 1;
+        }
+
+        ENGAGEMENT_MILESTONES.forEach((seconds) => {
+          if (
+            state.activeSeconds >= seconds &&
+            !state.engagementMilestones.has(seconds)
+          ) {
+            state.engagementMilestones.add(seconds);
+
+            track("engagement_milestone", {
+              active_time_seconds: seconds,
+              content_context: getContextName()
+            });
+          }
+        });
+      }, 1000);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const activeSection = document.querySelector(".page.active");
+        state.currentSection =
+          activeSection?.id?.replace(/^page-/, "") || "about";
+
+        trackLandingContext();
+        track("section_view", {
+          section_name: state.currentSection,
+          navigation_source: "initial_load"
+        });
+
+        setupProjectImpressions();
+        setupPerformanceTracking();
+        recordScrollDepth();
+        syncBlogArticleState();
+      });
+    })();
+  </script>
+
 </body>
 
 </html>
