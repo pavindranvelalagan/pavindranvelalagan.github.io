@@ -280,8 +280,6 @@ Once a device starts controlling something instead of only measuring it, failure
 
 Even before the final safety logic was implemented, we had to think about questions such as:
 
-- What happens if the drops suddenly stop?
-- What happens when the IV bag becomes empty?
 - What happens if the bedside unit loses communication with the nurse station?
 - What happens if the cloud connection fails?
 - What happens during a power failure?
