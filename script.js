@@ -664,12 +664,6 @@ if (blogBackBtn) {
 // Initialize blog rendering
 renderBlogList();
 
-// Initialize filtering and routing on load
-document.addEventListener('DOMContentLoaded', () => {
-  filterProjects('all');
-  handleRouting();
-});
-
 // ===== LIGHTBOX LOGIC =====
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightbox-img');
@@ -822,4 +816,3 @@ function renderThoughts() {
     `;
   }).join('');
 }
-
