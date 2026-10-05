@@ -348,34 +348,4 @@ What gets lost are the abandoned ideas, wrong assumptions, temporary solutions, 
 
 Smart IV was our 3rd Year Project, but for me it was also a long exercise in figuring things out as we went.
 
-And that is probably the most accurate way I can describe the whole experience.                                                                                                                                                                                                                                                                                  etect the drops in a normal IV setup and do something useful with that information?
-
-From there, the project slowly grew.
-
-Drop detection led to flow measurement.
-
-Flow measurement led to automatic control.
-
-Automatic control led to safety questions.
-
-Multiple devices led to wireless communication and a nurse-station application.
-
-Remote monitoring led to AWS and the mobile app.
-
-And finally, all of those pieces had to be tested, documented and demonstrated as one system.
-
-The finished project looks much more organised than the process that produced it.
-
-That is probably the main reason I wanted to write this series.
-
-A final report normally shows the final architecture.
-
-A presentation normally shows the parts that worked.
-
-A GitHub repository normally shows the code that survived.
-
-What gets lost are the abandoned ideas, wrong assumptions, temporary solutions, debugging sessions, competition questions and small decisions that actually make up most of an engineering project.
-
-Smart IV was our 3rd Year Project, but for me it was also a long exercise in figuring things out as we went.
-
 And that is probably the most accurate way I can describe the whole experience.
