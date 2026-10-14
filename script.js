@@ -1,3 +1,10 @@
+// Respect reduced motion for scrolling requested directly by JavaScript.
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
+}
+
 // ===== PAGE NAVIGATION =====
 const navLinks = document.querySelectorAll('.nav-link');
 const pages = document.querySelectorAll('.page');
@@ -34,7 +41,7 @@ function switchPage(targetPage, updateHistory = true) {
     window.history.pushState({ page: targetPage }, '', url.href);
   }
 
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  scrollToTop();
 }
 
 navLinks.forEach(link => {
@@ -558,7 +565,7 @@ async function showBlogDetail(postId, updateHistory = true) {
   // Swap views to display detail immediately (showing loading state if fetching is required)
   blogListView.style.display = 'none';
   blogDetailView.style.display = 'block';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  scrollToTop();
 
   // Load content asynchronously if versioned or single markdown file
   if (isVersioned) {
@@ -612,7 +619,7 @@ async function showBlogDetail(postId, updateHistory = true) {
         bodyText.innerHTML = parseMarkdownToHTML(v1Md);
         setupBlogImagesLightbox();
         bodyText.classList.remove('fade-out');
-      }, 150);
+      }, reducedMotion.matches ? 0 : 150);
     });
 
     btnV2.addEventListener('click', () => {
@@ -626,7 +633,7 @@ async function showBlogDetail(postId, updateHistory = true) {
         bodyText.innerHTML = parseMarkdownToHTML(v2Md);
         setupBlogImagesLightbox();
         bodyText.classList.remove('fade-out');
-      }, 150);
+      }, reducedMotion.matches ? 0 : 150);
     });
   } else if (isSingleMarkdown && post.filePath) {
     const bodyText = document.getElementById('blog-detail-body-text');
@@ -657,7 +664,7 @@ function hideBlogDetail(updateHistory = true) {
 if (blogBackBtn) {
   blogBackBtn.addEventListener('click', () => {
     hideBlogDetail();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop();
   });
 }
 
